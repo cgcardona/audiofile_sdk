@@ -3,7 +3,8 @@
 window.onload = function()
 {
   'use strict';
-  var AFSDK = (function(){
+  var AFSDK = (function()
+  {
     function AFSDK()
     {
     }
@@ -16,7 +17,8 @@ window.onload = function()
     return AFSDK;
   })();
 
-  var AFParser = (function(){
+  var AFParser = (function()
+  {
     function AFParser(docId)
     {
       var infoDiv = $('#' + docId + ' > div')[0];
@@ -28,28 +30,33 @@ window.onload = function()
         'measures':{}
       };
 
-      $('#' + docId + ' div[data-measure]').each(function(index){
+      $('#' + docId + ' div[data-measure]').each(function(index)
+      {
         return_obj.measures[index] = {};
         $(this).children().each(function(indx)
         {
           return_obj.measures[index][indx] = {};
 
-          if(this.getAttribute('data-chord') == 'true')
+          var outerEl = this;
+          $(this.attributes).each(function(inex, el)
           {
-            $(this).children().each(function(ind)
+            if(el.localName == 'data-chord')
             {
-              return_obj.measures[index][indx]['note' + ind] = {};
-              return_obj.measures[index][indx]['note' + ind].note = this.getAttribute('data-note');
-              return_obj.measures[index][indx]['note' + ind].pitch = this.getAttribute('data-pitch');
-              return_obj.measures[index][indx]['note' + ind].octave = this.getAttribute('data-octave');
-            });
-          }
-          else
-          {
-            return_obj.measures[index][indx].note = this.getAttribute('data-note');
-            return_obj.measures[index][indx].pitch = this.getAttribute('data-pitch');
-            return_obj.measures[index][indx].octave = this.getAttribute('data-octave');
-          }
+              $(outerEl).children().each(function(ind)
+              {
+                return_obj.measures[index][indx]['note' + ind] = {};
+                return_obj.measures[index][indx]['note' + ind].note = this.getAttribute('data-note');
+                return_obj.measures[index][indx]['note' + ind].pitch = this.getAttribute('data-pitch');
+                return_obj.measures[index][indx]['note' + ind].octave = this.getAttribute('data-octave');
+              });
+            }
+            else
+            {
+              return_obj.measures[index][indx].note = outerEl.getAttribute('data-note');
+              return_obj.measures[index][indx].pitch = outerEl.getAttribute('data-pitch');
+              return_obj.measures[index][indx].octave = outerEl.getAttribute('data-octave');
+            }
+          });
         });
       });
       return return_obj;

@@ -3,59 +3,61 @@
 window.onload = function()
 {
   'use strict';
-  var AudiofileSDK = (function(){
-    function AudiofileSDK()
+  var AFSDK = (function(){
+    function AFSDK()
     {
     }
   
-    AudiofileSDK.prototype.parser = function(docId)
+    AFSDK.prototype.parse = function(docId)
     {
-      return new AudiofileParser(docId);
+      return new AFParser(docId);
     };
   
-    return AudiofileSDK;
+    return AFSDK;
   })();
 
-  var AudiofileParser = (function(){
-    function AudiofileParser(docId)
+  var AFParser = (function(){
+    function AFParser(docId)
     {
-      var title = $('#' + docId + ' div[data-title]')[0];
-      var creator = $('#' + docId + ' div[data-creator]')[0];
+      var infoDiv = $('#' + docId + ' > div')[0];
       var return_obj = {
-        'title':$(title).attr('data-title'),
-        'creator':$(creator).attr('data-creator'),
-        'bpm':$(creator).attr('data-bpm'),
-        'key':$(creator).attr('data-key'),
+        'creator':$(infoDiv).attr('data-creator'),
+        'title':$(infoDiv).attr('data-title'),
+        'bpm':$(infoDiv).attr('data-bpm'),
+        'key':$(infoDiv).attr('data-key'),
         'measures':{}
       };
+
       $('#' + docId + ' div[data-measure]').each(function(index){
         return_obj.measures[index] = {};
-        $(this).children().each(function(indx){
+        $(this).children().each(function(indx)
+        {
           return_obj.measures[index][indx] = {};
-          if($(this).attr('data-chord') == 'true')
+
+          if(this.getAttribute('data-chord') == 'true')
           {
             $(this).children().each(function(ind)
             {
               return_obj.measures[index][indx]['note' + ind] = {};
-              return_obj.measures[index][indx]['note' + ind].note = $(this).attr('data-note');
-              return_obj.measures[index][indx]['note' + ind].pitch = $(this).attr('data-pitch');
-              return_obj.measures[index][indx]['note' + ind].octave = $(this).attr('data-octave');
+              return_obj.measures[index][indx]['note' + ind].note = this.getAttribute('data-note');
+              return_obj.measures[index][indx]['note' + ind].pitch = this.getAttribute('data-pitch');
+              return_obj.measures[index][indx]['note' + ind].octave = this.getAttribute('data-octave');
             });
           }
           else
           {
-            return_obj.measures[index][indx].note = $(this).attr('data-note');
-            return_obj.measures[index][indx].pitch = $(this).attr('data-pitch');
-            return_obj.measures[index][indx].octave = $(this).attr('data-octave');
+            return_obj.measures[index][indx].note = this.getAttribute('data-note');
+            return_obj.measures[index][indx].pitch = this.getAttribute('data-pitch');
+            return_obj.measures[index][indx].octave = this.getAttribute('data-octave');
           }
         });
       });
       return return_obj;
     }
 
-    return AudiofileParser;
+    return AFParser;
   })();
   
-  var audiofile_sdk = new AudiofileSDK();
-  console.log(audiofile_sdk.parser('doc1'));
+  var audiofile_sdk = new AFSDK();
+  console.log(audiofile_sdk.parse('doc1'));
 };

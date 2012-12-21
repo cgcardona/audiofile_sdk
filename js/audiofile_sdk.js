@@ -5,27 +5,28 @@ window.onload = function()
   'use strict';
   var AFSDK = (function()
   {
-    function AFSDK()
+    function AFSDK(settings)
     {
+      if(settings.parser == true)
+        this.Parser  = new AFParser();
+
+      if(settings.painter == true)
+        this.Painter = new AFPainter();
+
+      if(settings.speaker == true)
+        this.Speaker = new AFSpeaker();
     }
-  
-    AFSDK.prototype.parse = function(docId)
-    {
-      return new AFParser(docId);
-    };
-  
-    AFSDK.prototype.paint = function(dataOb)
-    {
-      return new AFParser(docId);
-    };
   
     return AFSDK;
   })();
 
   var AFParser = (function()
   {
-    function AFParser(docId)
+    function AFParser()
     {
+    }
+
+    AFParser.prototype.parse = function(docId){
       var infoDiv = $('#' + docId + ' > div')[0];
       var return_obj = {
         'creator':$(infoDiv).attr('data-creator'),
@@ -65,23 +66,48 @@ window.onload = function()
         });
       });
       return return_obj;
-    }
+    };
 
     return AFParser;
   })();
 
   var AFPainter = (function()
   {
-    function AFPainter(dataOb)
+    function AFPainter()
     {
-      console.log(dataObj);
     }
+    
+    AFPainter.prototype.paint = function(dataOb)
+    {
+      console.log('coming to you live from the painter');
+    };
 
     return AFPainter;
   })();
-  
-  var audiofile_sdk = new AFSDK();
-  var dataObj = audiofile_sdk.parse('doc1');
 
-  console.log(audiofile_sdk.paint(dataObj));
+  var AFSpeaker = (function()
+  {
+    function AFSpeaker()
+    {
+    }
+    
+    AFSpeaker.prototype.speak = function(dataOb)
+    {
+      console.log('speaker coming to you live');
+    };
+
+    return AFSpeaker;
+  })();
+  
+  var audiofile_sdk = new AFSDK({
+    parser  : true,
+    painter : true,
+    speaker : true
+  });
+
+  var dataObj = audiofile_sdk.Parser.parse('doc1');
+
+  console.log(dataObj);
+  audiofile_sdk.Painter.paint(dataObj);
+  audiofile_sdk.Speaker.speak(dataObj);
 };

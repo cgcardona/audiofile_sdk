@@ -14,6 +14,11 @@ window.onload = function()
       return new AFParser(docId);
     };
   
+    AFSDK.prototype.paint = function(dataOb)
+    {
+      return new AFParser(docId);
+    };
+  
     return AFSDK;
   })();
 
@@ -64,7 +69,19 @@ window.onload = function()
 
     return AFParser;
   })();
+
+  var AFPainter = (function()
+  {
+    function AFPainter(dataOb)
+    {
+      console.log(dataObj);
+    }
+
+    return AFPainter;
+  })();
   
   var audiofile_sdk = new AFSDK();
-  console.log(audiofile_sdk.parse('doc1'));
+  var dataObj = audiofile_sdk.parse('doc1');
+
+  console.log(audiofile_sdk.paint(dataObj));
 };

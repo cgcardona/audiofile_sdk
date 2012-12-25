@@ -71,24 +71,36 @@ var AFUIGeneticsLab = (function()
 
   AFUIGeneticsLab.prototype.buildDom = function()
   {
+    var container = $('<div>');
     var setupFormContainer = $('<form>').attr('id', 'gaForm');
 
-    var generationSizeInput = $('<input>').attr('id', 'gaGSInput').attr('placeholder', 'Generation Size');
+    var setupFormHeader = $('<h1>Genetics Lab</h1>');
+    $(setupFormContainer).append(setupFormHeader);
+
+    var generationSizeInput = $('<p><input id="gaGSInput" placeholder="Generation Size"></p>');
     $(setupFormContainer).append(generationSizeInput);
 
-    var generationCountInput = $('<input>').attr('id', 'gaGCInput').attr('placeholder', 'Generation Count');
+    var generationCountInput = $('<p><input id="gaGCInput" placeholder="Generation Count"></p>');
     $(setupFormContainer).append(generationCountInput);
 
-    var dnaBitCount = $('<input>').attr('id', 'gaDNABitCount').attr('placeholder', 'DNA Bit Count');
+    var dnaBitCount = $('<p><input id="gaDNABitCount" placeholder="DNA Bit Count"></p>');
     $(setupFormContainer).append(dnaBitCount);
 
-    var potentialStepCount = $('<input>').attr('id', 'gaPSCount').attr('placeholder', 'Potential Step Count');
+    var potentialStepCount = $('<p><input id="gaPSCount" placeholder="Potential Step Count"></p>');
     $(setupFormContainer).append(potentialStepCount);
 
-    var submitGAForm = $('<button>').attr('id', 'gaSubmit').attr('value', 'Potential Step Count');
+    var submitGAForm = $('<button id="gaSubmit">Generate DNA</button>');
     $(setupFormContainer).append(submitGAForm);
 
-    return setupFormContainer;
+    $(container).append(setupFormContainer);
+
+    var dnaOutputContainer = $('<div>');
+    var dnaList = $('<ol id="gaDNAList">');
+
+    $(dnaOutputContainer).append(dnaList);
+    $(container).append(dnaOutputContainer);
+
+    return container;
   };
 
   AFUIGeneticsLab.prototype.attachEventListeners = function()
@@ -110,7 +122,10 @@ var AFUIGeneticsLab = (function()
   {
     this.ctx.AFGeneticsLab.updateSettings(settings);
     var dnaArray = this.ctx.AFGeneticsLab.generateDNA();
-    console.log(dnaArray);
+    $(dnaArray).each(function(indx, elmnt){
+      var listItem = $('<li>' + elmnt + '</li>');
+      $('#gaDNAList').append(listItem);
+    });
   };
 
   return AFUIGeneticsLab;

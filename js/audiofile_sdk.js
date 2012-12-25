@@ -1,21 +1,134 @@
 /*global $:false */
 /*global console:false */
-'use strict';
 var AFSDK = (function()
 {
+'use strict';
   function AFSDK(settings)
   {
-    if(settings.modules.parser === true)
-      this.Parser  = new AFParser();
+    var domModules = [];
 
-    if(settings.modules.painter === true)
-      this.Painter = new AFPainter();
+    if(settings.modules.ga === true)
+    {
+      this.AFGeneticsLab = new AFGeneticsLab();
+      this.AFUIGeneticsLab = new AFUIGeneticsLab(this);
+      domModules.push('AFUIGeneticsLab');
+    }
 
-    if(settings.modules.speaker === true)
-      this.Speaker = new AFSpeaker();
+    this.UI = new AFUI(this);
+    this.UI.buildDom(domModules);
+
+    //if(settings.modules.parser === true)
+    //  this.Parser  = new AFParser();
+
+    //if(settings.modules.painter === true)
+    //  this.Painter = new AFPainter();
+
+    //if(settings.modules.speaker === true)
+    //  this.Speaker = new AFSpeaker();
   }
 
   return AFSDK;
+})();
+
+var AFGeneticsLab = (function()
+{
+  function AFGeneticsLab()
+  {
+  }
+
+  AFGeneticsLab.prototype.updateSettings = function(settings)
+  {
+    this.gaBSInput     = settings.gaBSInput;
+    this.gaGCInput     = settings.gaGCInput;
+    this.gaDNABitCount = settings.gaDNABitCount;
+    this.gaPSCount     = settings.gaPSCount
+  };
+
+  AFGeneticsLab.prototype.generateDNA = function()
+  {
+    var dnaArray = [];
+    for(var i = 0; i < this.gaDNABitCount; i++)
+    {
+      var tmpString = '';
+      Math.floor((Math.random()*10)+1);
+      dnaArray.push('asdf');
+    }
+    console.log(dnaArray);
+  };
+
+  return AFGeneticsLab;
+})();
+
+var AFUIGeneticsLab = (function()
+{
+  function AFUIGeneticsLab(context)
+  {
+    this.ctx = context;
+  }
+
+  AFUIGeneticsLab.prototype.buildDom = function()
+  {
+    var setupFormContainer = $('<form>').attr('id', 'gaForm');
+
+    var generationSizeInput = $('<input>').attr('id', 'gaGSInput').attr('placeholder', 'Generation Size');
+    $(setupFormContainer).append(generationSizeInput);
+
+    var generationCountInput = $('<input>').attr('id', 'gaGCInput').attr('placeholder', 'Generation Count');
+    $(setupFormContainer).append(generationCountInput);
+
+    var dnaBitCount = $('<input>').attr('id', 'gaDNABitCount').attr('placeholder', 'DNA Bit Count');
+    $(setupFormContainer).append(dnaBitCount);
+
+    var potentialStepCount = $('<input>').attr('id', 'gaPSCount').attr('placeholder', 'Potential Step Count');
+    $(setupFormContainer).append(potentialStepCount);
+
+    var submitGAForm = $('<button>').attr('id', 'gaSubmit').attr('value', 'Potential Step Count');
+    $(setupFormContainer).append(submitGAForm);
+
+    return setupFormContainer;
+  };
+
+  AFUIGeneticsLab.prototype.attachEventListeners = function()
+  {
+    var that = this;
+    $('#gaSubmit').click(function(evnt) {
+      that.generateDNA({
+        gaGSInput     : parseInt($('#gaGSInput').val(), 10),
+        gaGCInput     : parseInt($('#gaGCInput').val(), 10),
+        gaDNABitCount : parseInt($('#gaDNABitCount').val(), 10),
+        gaPSCount     : parseInt($('#gaPSCount').val(), 10),
+        gaSubmit      : parseInt($('#gaSubmit').val(), 10),
+      });
+      return false;
+    });
+  };
+
+  AFUIGeneticsLab.prototype.generateDNA = function(settings)
+  {
+    this.ctx.AFGeneticsLab.updateSettings(settings);
+    this.ctx.AFGeneticsLab.generateDNA();
+  };
+
+  return AFUIGeneticsLab;
+})();
+
+var AFUI = (function()
+{
+  function AFUI(context)
+  {
+    this.ctx = context;
+  }
+
+  AFUI.prototype.buildDom = function(domModules)
+  {
+    var that = this;
+    $(domModules).each(function(indx, elmnt){
+      $('#' + this).html(that.ctx[elmnt].buildDom());
+      $('#' + this).html(that.ctx[elmnt].attachEventListeners());
+    });
+  };
+
+  return AFUI;
 })();
 
 var AFParser = (function()
@@ -77,7 +190,6 @@ var AFPainter = (function()
   
   AFPainter.prototype.paint = function(dataObj)
   {
-    console.log(dataObj);
   };
 
   return AFPainter;
@@ -91,7 +203,6 @@ var AFSpeaker = (function()
   
   AFSpeaker.prototype.speak = function(dataOb)
   {
-    console.log('speaker coming to you live');
   };
 
   return AFSpeaker;

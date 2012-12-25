@@ -10,6 +10,7 @@
         <li><a href='tests.html'>Tests</a></li>
       </ul>
     </nav>
+    <div id='AFUIGeneticsLab'></div>
     <div id="doc1">
       <div data-measure data-title='los song' data-creator='carlos cardona' data-bpm='128' data-key='c'>
         <div data-chord>
@@ -30,15 +31,17 @@
       {
         var audiofile_sdk = new AFSDK({
           modules : {
-            parser  : true,
-            painter : true,
+            ga      : true,
+            parser  : false,
+            painter : false,
             speaker : false
           }
         });
 
-        var dataObj = audiofile_sdk.Parser.parse('doc1');
+        //console.log(audiofile_sdk);
+        //var dataObj = audiofile_sdk.Parser.parse('doc1');
 
-        audiofile_sdk.Painter.paint(dataObj);
+        //audiofile_sdk.Painter.paint(dataObj);
         //audiofile_sdk.Speaker.speak(dataObj);
       }
     </script>

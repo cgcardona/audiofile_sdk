@@ -38,7 +38,7 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.updateSettings = function(settings)
   {
-    this.gaBSInput     = settings.gaBSInput;
+    this.gaGSInput     = settings.gaGSInput;
     this.gaGCInput     = settings.gaGCInput;
     this.gaDNABitCount = settings.gaDNABitCount;
     this.gaPSCount     = settings.gaPSCount
@@ -47,13 +47,16 @@ var AFGeneticsLab = (function()
   AFGeneticsLab.prototype.generateDNA = function()
   {
     var dnaArray = [];
-    for(var i = 0; i < this.gaDNABitCount; i++)
+    for(var x = 0; x < this.gaGSInput; x++)
     {
       var tmpString = '';
-      Math.floor((Math.random()*10)+1);
-      dnaArray.push('asdf');
+      for(var i = 0; i < (this.gaDNABitCount); i++)
+        tmpString += Math.floor((Math.random() * this.gaPSCount));
+
+      dnaArray.push(tmpString);
     }
-    console.log(dnaArray);
+
+    return dnaArray;
   };
 
   return AFGeneticsLab;
@@ -106,7 +109,8 @@ var AFUIGeneticsLab = (function()
   AFUIGeneticsLab.prototype.generateDNA = function(settings)
   {
     this.ctx.AFGeneticsLab.updateSettings(settings);
-    this.ctx.AFGeneticsLab.generateDNA();
+    var dnaArray = this.ctx.AFGeneticsLab.generateDNA();
+    console.log(dnaArray);
   };
 
   return AFUIGeneticsLab;

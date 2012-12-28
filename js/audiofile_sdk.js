@@ -72,13 +72,27 @@ var AFApplicationManager = (function()
 {
   function AFApplicationManager()
   {
+    this.activeApplication = false;
   }
 
   AFApplicationManager.prototype = new AFObject();
 
   AFApplicationManager.prototype.startApplication = function(applicationJson)
   {
-    console.log(applicationJson);
+    if(!this.activeApplication)
+      {
+        var afApplication = new AFApplication();
+        var that = this;
+        $.get('applications/' + applicationJson.title + '/index.html', function(data)
+        {
+          afApplication.setMarkup(data);
+          afApplication.activeApplication = true;
+
+          that.activeApplication = afApplication;
+          var afUI = new AFUI();
+          console.log(afApplication);
+        });
+      }
   };
 
   AFApplicationManager.prototype.stopApplication = function()
@@ -100,11 +114,37 @@ var AFApplication = (function()
 {
   function AFApplication()
   {
+    this.markup = null;
+    this.activeApplication = false;
   }
 
   AFApplication.prototype = new AFObject();
 
+  AFApplication.prototype.setMarkup = function(markup)
+  {
+    this.markup = markup;
+  };
+
   return AFApplication;
+})();
+
+var AFUI = (function()
+{
+  function AFUI(context)
+  {
+    this.ctx = context;
+  }
+
+  AFUI.prototype.buildDom = function(domModules)
+  {
+    var that = this;
+    $(domModules).each(function(indx, elmnt){
+      $('#' + this).html(that.ctx[elmnt].buildDom());
+      $('#' + this).html(that.ctx[elmnt].attachEventListeners());
+    });
+  };
+
+  return AFUI;
 })();
 
 var AFSDK = (function()
@@ -258,14 +298,14 @@ var AFUIGeneticsLab = (function()
   return AFUIGeneticsLab;
 })();
 
-var AFUI = (function()
+var FUI = (function()
 {
-  function AFUI(context)
+  function FUI(context)
   {
     this.ctx = context;
   }
 
-  AFUI.prototype.buildDom = function(domModules)
+  FUI.prototype.buildDom = function(domModules)
   {
     var that = this;
     $(domModules).each(function(indx, elmnt){
@@ -274,7 +314,7 @@ var AFUI = (function()
     });
   };
 
-  return AFUI;
+  return FUI;
 })();
 
 var AFParser = (function()

@@ -38,10 +38,12 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.updateSettings = function(settings)
   {
+  console.log(settings);
     this.gaGSInput     = settings.gaGSInput;
     this.gaGCInput     = settings.gaGCInput;
     this.gaDNABitCount = settings.gaDNABitCount;
-    this.gaPSCount     = settings.gaPSCount
+    this.gaPSCount     = settings.gaPSCount;
+    this.gaDSSteps     = settings.gaDSSteps;
   };
 
   AFGeneticsLab.prototype.generateDNA = function()
@@ -50,13 +52,27 @@ var AFGeneticsLab = (function()
     for(var x = 0; x < this.gaGSInput; x++)
     {
       var tmpString = '';
-      for(var i = 0; i < (this.gaDNABitCount); i++)
+      for(var i = 0; i < this.gaDNABitCount; i++)
         tmpString += Math.floor((Math.random() * this.gaPSCount));
 
       dnaArray.push(tmpString);
     }
 
     return dnaArray;
+  };
+
+  AFGeneticsLab.prototype.gradeDNA = function(dnaArray)
+  {
+    console.log(this.gaDSSteps);
+    $(dnaArray).each(function(indx, elmnt){
+      var soundState = true;
+      var tone = 0;
+
+      for(var p = 0; p < elmnt.length; p++)
+      {
+        //console.log(elmnt[p]);
+      }
+    });
   };
 
   return AFGeneticsLab;
@@ -77,25 +93,28 @@ var AFUIGeneticsLab = (function()
     var setupFormHeader = $('<h1>Genetics Lab</h1>');
     $(setupFormContainer).append(setupFormHeader);
 
-    var generationSizeInput = $('<p><input id="gaGSInput" placeholder="Generation Size"></p>');
+    var generationSizeInput = $('<p>Generations Size: <input id="gaGSInput" placeholder="Generation Size"></p>');
     $(setupFormContainer).append(generationSizeInput);
 
-    var generationCountInput = $('<p><input id="gaGCInput" placeholder="Generation Count"></p>');
+    var generationCountInput = $('<p>Generation Count: <input id="gaGCInput" placeholder="Generation Count"></p>');
     $(setupFormContainer).append(generationCountInput);
 
-    var dnaBitCount = $('<p><input id="gaDNABitCount" placeholder="DNA Bit Count"></p>');
+    var dnaBitCount = $('<p>DNA Bit Count: <input id="gaDNABitCount" placeholder="DNA Bit Count"></p>');
     $(setupFormContainer).append(dnaBitCount);
 
-    var potentialStepCount = $('<p><input id="gaPSCount" placeholder="Potential Step Count"></p>');
+    var potentialStepCount = $('<p>Potential Step Count: <input id="gaPSCount" placeholder="Potential Step Count"></p>');
     $(setupFormContainer).append(potentialStepCount);
+
+    var desiredScale = $('<p>Desired Scale Steps: <input id="gaDSSteps" placeholder="Desired Scale Steps"></p>');
+    $(setupFormContainer).append(desiredScale);
 
     var submitGAForm = $('<button id="gaSubmit">Generate DNA</button>');
     $(setupFormContainer).append(submitGAForm);
 
     $(container).append(setupFormContainer);
 
-    var dnaOutputContainer = $('<div>');
-    var dnaList = $('<ol id="gaDNAList">');
+    var dnaOutputContainer = $('<div></div>');
+    var dnaList = $('<ol id="gaDNAList"></ol>');
 
     $(dnaOutputContainer).append(dnaList);
     $(container).append(dnaOutputContainer);
@@ -112,7 +131,8 @@ var AFUIGeneticsLab = (function()
         gaGCInput     : parseInt($('#gaGCInput').val(), 10),
         gaDNABitCount : parseInt($('#gaDNABitCount').val(), 10),
         gaPSCount     : parseInt($('#gaPSCount').val(), 10),
-        gaSubmit      : parseInt($('#gaSubmit').val(), 10),
+        gaDSSteps     : $('#gaDSSteps').val(),
+        gaSubmit      : parseInt($('#gaSubmit').val(), 10)
       });
       return false;
     });
@@ -122,6 +142,7 @@ var AFUIGeneticsLab = (function()
   {
     this.ctx.AFGeneticsLab.updateSettings(settings);
     var dnaArray = this.ctx.AFGeneticsLab.generateDNA();
+    var gradedDNA = this.ctx.AFGeneticsLab.gradeDNA(dnaArray);
     $(dnaArray).each(function(indx, elmnt){
       var listItem = $('<li>' + elmnt + '</li>');
       $('#gaDNAList').append(listItem);

@@ -29,14 +29,18 @@
     <script>
       window.onload = function()
       {
-        var audiofile_sdk = new AFSDK({
-          modules : {
-            ga      : true,
-            parser  : false,
-            painter : false,
-            speaker : false
-          }
-        });
+        var afcore = new AFCore();
+        //var foobar = new AFCore();
+        //console.log(foobar);
+        //foobar.foobar();
+        //var audiofile_sdk = new AFSDK({
+        //  modules : {
+        //    ga      : true,
+        //    parser  : false,
+        //    painter : false,
+        //    speaker : false
+        //  }
+        //});
 
         //console.log(audiofile_sdk);
         //var dataObj = audiofile_sdk.Parser.parse('doc1');

@@ -1,8 +1,84 @@
 /*global $:false */
 /*global console:false */
+'use strict';
+var AFObject = (function()
+{
+  function AFObject()
+  {}
+
+  return AFObject;
+})();
+
+var AFController = (function()
+{
+  function AFController()
+  {}
+
+  AFController.prototype = new AFObject();
+
+  AFController.prototype.onAFApplicationStart = function()
+  {
+    console.log('onAFApplicationStart called');
+  };
+
+  AFController.prototype.onAFApplicationStop = function()
+  {
+  };
+
+  AFController.prototype.onAFApplicationPause = function()
+  {
+  };
+
+  AFController.prototype.onAFApplicationUnpause = function()
+  {
+  };
+
+  return AFController;
+})();
+
+var AFCore = (function()
+{
+  function AFCore()
+  {
+    var afCoreController = new AFCoreController();
+    afCoreController.onAFApplicationStart();
+  }
+
+  AFCore.prototype = new AFObject();
+
+  return AFCore;
+})();
+
+var AFCoreController = (function()
+{
+  function AFCoreController()
+  {}
+
+  AFCoreController.prototype = new AFController();
+
+  AFCoreController.prototype.onAFApplicationStart = function()
+  {
+    var afApplicationManager = new AFApplicationManager();
+    console.log(afApplicationManager);
+    //return AFController.prototype.onAFApplicationStart.call(this);
+  };
+
+  return AFCoreController;
+})();
+
+var AFApplicationManager = (function()
+{
+  function AFApplicationManager()
+  {
+  }
+
+  AFApplicationManager.prototype = new AFObject();
+
+  return AFApplicationManager;
+})();
+
 var AFSDK = (function()
 {
-'use strict';
   function AFSDK(settings)
   {
     var domModules = [];

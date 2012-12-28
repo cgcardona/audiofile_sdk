@@ -18,7 +18,7 @@ var AFController = (function()
 
   AFController.prototype.onAFApplicationStart = function()
   {
-    console.log('onAFApplicationStart called');
+    console.log('AFController onAFApplicationStart called');
   };
 
   AFController.prototype.onAFApplicationStop = function()

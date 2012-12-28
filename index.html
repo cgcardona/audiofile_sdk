@@ -2,51 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Audiofile SDK</title>
+    <title>Audiofile Client</title>
   </head>
   <body>
-    <nav>
-      <ul>
-        <li><a href='tests.html'>Tests</a></li>
-      </ul>
-    </nav>
-    <div id='AFUIGeneticsLab'></div>
-    <div id="doc1">
-      <div data-measure data-title='los song' data-creator='carlos cardona' data-bpm='128' data-key='c'>
-        <div data-chord>
-          <div data-note='half' data-pitch='0' data-octave='3'></div>
-          <div data-note='quarter' data-pitch='4' data-octave='4'></div>
-        </div>
-      </div>
-      <div data-measure>
-        <div data-note='half' data-pitch='0' data-octave='3'></div>
-        <div data-note='quarter' data-pitch='4' data-octave='4'></div>
-      </div>
-    </div>
-    <div id='canvas1'></div>
     <script src="js/jquery.js"></script>
     <script src="js/audiofile_sdk.js"></script>
     <script>
       window.onload = function()
       {
         var afcore = new AFCore();
-        //var foobar = new AFCore();
-        //console.log(foobar);
-        //foobar.foobar();
-        //var audiofile_sdk = new AFSDK({
-        //  modules : {
-        //    ga      : true,
-        //    parser  : false,
-        //    painter : false,
-        //    speaker : false
-        //  }
-        //});
-
-        //console.log(audiofile_sdk);
-        //var dataObj = audiofile_sdk.Parser.parse('doc1');
-
-        //audiofile_sdk.Painter.paint(dataObj);
-        //audiofile_sdk.Speaker.speak(dataObj);
       }
     </script>
   </body>

@@ -59,7 +59,9 @@ var AFCoreController = (function()
   AFCoreController.prototype.onAFApplicationStart = function()
   {
     var afApplicationManager = new AFApplicationManager();
-    console.log(afApplicationManager);
+    afApplicationManager.startApplication({
+      "title" : "startupApplication"
+    });
     //return AFController.prototype.onAFApplicationStart.call(this);
   };
 
@@ -74,7 +76,35 @@ var AFApplicationManager = (function()
 
   AFApplicationManager.prototype = new AFObject();
 
+  AFApplicationManager.prototype.startApplication = function(applicationJson)
+  {
+    console.log(applicationJson);
+  };
+
+  AFApplicationManager.prototype.stopApplication = function()
+  {
+  };
+
+  AFApplicationManager.prototype.pauseApplication = function()
+  {
+  };
+
+  AFApplicationManager.prototype.unpauseApplication = function()
+  {
+  };
+
   return AFApplicationManager;
+})();
+
+var AFApplication = (function()
+{
+  function AFApplication()
+  {
+  }
+
+  AFApplication.prototype = new AFObject();
+
+  return AFApplication;
 })();
 
 var AFSDK = (function()

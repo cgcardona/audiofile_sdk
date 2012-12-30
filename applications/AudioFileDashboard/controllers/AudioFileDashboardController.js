@@ -8,7 +8,7 @@ var AudioFileDashboardController = (function(){
 
   AudioFileDashboardController.prototype.onAFApplicationStart = function()
   {
-    console.log('cted!');
+    console.log('AudioFileDashboardController onAFApplicationStart called');
   };
 
   AudioFileDashboardController.prototype.onAFApplicationStop = function()

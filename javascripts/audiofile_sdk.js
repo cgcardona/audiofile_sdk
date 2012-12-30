@@ -145,8 +145,7 @@ var AFApplication = (function()
     var ctx = this;
     $.get('applications/' + applicationController + '/views/index.html', function(data)
     {
-      this.applicationDOM = data;
-      console.log(this.applicationDOM);
+      ctx.applicationDOM = data;
     });
   };
 

@@ -1,7 +1,7 @@
 var AudioFileDashboardController = (function(){
   function AudioFileDashboardController()
   {
-    console.log('created!');
+    console.log('created twice!');
   }
 
   AudioFileDashboardController.prototype = new AudioFileDashboardController();

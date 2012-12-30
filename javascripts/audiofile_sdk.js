@@ -65,7 +65,7 @@ var AFCoreController = (function()
   {
     var afApplicationManager = new AFApplicationManager();
     afApplicationManager.startAFApplication({
-      "title" : "AudioFileDashboard"
+      "controller" : "AudioFileDashboard"
     });
     //return AFController.prototype.onAFApplicationStart.call(this);
   };
@@ -88,7 +88,7 @@ var AFApplicationManager = (function()
   {
     if(!this.activeApplication)
     {
-        this.activeApplication = new AFApplication(startAppJson.title);
+        this.activeApplication = new AFApplication(startAppJson.controller);
         this.hasActiveApplication = true;
     }
   };
@@ -110,29 +110,52 @@ var AFApplicationManager = (function()
 
 var AFApplication = (function()
 {
-  function AFApplication(applicationTitle)
+  function AFApplication(applicationController)
   {
-    var that = this;
-    // $.getJSON grabs the manifest which has the app's controller's name
-    $.getJSON('applications/' + applicationTitle + '/config/AFManifest.json', function(data)
-    {
-      this.manifest = data;
-
-      // need to get a pointer to the js that gets executed by $.getScript
-      $.getScript('applications/' + this.manifest.controller + '/controllers/' + this.manifest.controller + 'Controller.js', function(data)
-      {
-        var controllerName = applicationTitle + 'Controller';
-        console.log(data);
-        //console.log(controllerName);
-        //window[controllerName]();
-      });
-    });
+    this.getApplicationManifest(applicationController);
+    this.getApplicationController(applicationController);
+    this.getApplicationDOM(applicationController);
   }
 
   AFApplication.prototype = new AFObject();
 
-  AFApplication.prototype.startApplication = function()
+  AFApplication.prototype.getApplicationManifest = function(applicationController)
   {
+    var ctx = this;
+    // $.getJSON grabs the manifest which has the app's controller's name
+    $.getJSON('applications/' + applicationController + '/config/AFManifest.json', function(data)
+    {
+      ctx.applicationManifest = data;
+    });
+  };
+
+  AFApplication.prototype.getApplicationController = function(applicationController)
+  {
+    var ctx = this;
+    // need to get a pointer to the js that gets executed by $.getScript
+    $.getScript('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js', function(data)
+    {
+      ctx.applicationController = new window[applicationController + 'Controller']();
+      ctx.startApplication(ctx.applicationController);
+    });
+  };
+
+  AFApplication.prototype.getApplicationDOM= function(applicationController)
+  {
+    var ctx = this;
+    $.get('applications/' + applicationController + '/views/index.html', function(data)
+    {
+      this.applicationDOM = data;
+      console.log(this.applicationDOM);
+    });
+  };
+
+  AFApplication.prototype.startApplication = function(applicationController)
+  {
+    // ApplicatoinController also got created with the getScript above. Need to figure that out
+    // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
+    applicationController.onAFApplicationStart();
+
   };
 
   AFApplication.prototype.stopApplication = function()

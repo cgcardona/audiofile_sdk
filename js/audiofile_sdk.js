@@ -60,7 +60,7 @@ var AFCoreController = (function()
   {
     var afApplicationManager = new AFApplicationManager();
     afApplicationManager.startApplication({
-      "title" : "startupApplication"
+      "title" : "AudioFileDashboard"
     });
     //return AFController.prototype.onAFApplicationStart.call(this);
   };
@@ -72,27 +72,19 @@ var AFApplicationManager = (function()
 {
   function AFApplicationManager()
   {
-    this.activeApplication = false;
+    this.activeApplication = null;
+    this.hasActiveApplication = false;
   }
 
   AFApplicationManager.prototype = new AFObject();
 
-  AFApplicationManager.prototype.startApplication = function(applicationJson)
+  AFApplicationManager.prototype.startApplication = function(startAppJson)
   {
     if(!this.activeApplication)
-      {
-        var afApplication = new AFApplication();
-        var that = this;
-        $.get('applications/' + applicationJson.title + '/index.html', function(data)
-        {
-          afApplication.setMarkup(data);
-          afApplication.activeApplication = true;
-
-          that.activeApplication = afApplication;
-          var afUI = new AFUI();
-          console.log(afApplication);
-        });
-      }
+    {
+        this.activeApplication = new AFApplication(startAppJson.title);
+        this.hasActiveApplication = true;
+    }
   };
 
   AFApplicationManager.prototype.stopApplication = function()
@@ -112,10 +104,19 @@ var AFApplicationManager = (function()
 
 var AFApplication = (function()
 {
-  function AFApplication()
+  function AFApplication(applicationTitle)
   {
-    this.markup = null;
-    this.activeApplication = false;
+    var that = this;
+    $.getJSON('applications/' + applicationTitle + '/config/AFManifest.json', function(data)
+    {
+      $.getScript('applications/' + applicationTitle + '/controllers/' + applicationTitle + 'Controller.js', function(data)
+      {
+        var controllerName = applicationTitle + 'Controller';
+        console.log(data);
+        console.log(controllerName);
+        window[controllerName]();
+      });
+    });
   }
 
   AFApplication.prototype = new AFObject();
@@ -123,6 +124,13 @@ var AFApplication = (function()
   AFApplication.prototype.setMarkup = function(markup)
   {
     this.markup = markup;
+    console.log(markup);
+  };
+
+  AFApplication.prototype.setMarkup = function(markup)
+  {
+    this.markup = markup;
+    console.log(markup);
   };
 
   return AFApplication;

@@ -64,7 +64,7 @@ var AFCoreController = (function()
   AFCoreController.prototype.onAFApplicationStart = function()
   {
     var afApplicationManager = new AFApplicationManager();
-    afApplicationManager.startApplication({
+    afApplicationManager.startAFApplication({
       "title" : "AudioFileDashboard"
     });
     //return AFController.prototype.onAFApplicationStart.call(this);
@@ -84,7 +84,7 @@ var AFApplicationManager = (function()
 
   AFApplicationManager.prototype = new AFObject();
 
-  AFApplicationManager.prototype.startApplication = function(startAppJson)
+  AFApplicationManager.prototype.startAFApplication = function(startAppJson)
   {
     if(!this.activeApplication)
     {
@@ -93,15 +93,15 @@ var AFApplicationManager = (function()
     }
   };
 
-  AFApplicationManager.prototype.stopApplication = function()
+  AFApplicationManager.prototype.stopAFApplication = function()
   {
   };
 
-  AFApplicationManager.prototype.pauseApplication = function()
+  AFApplicationManager.prototype.pauseAFApplication = function()
   {
   };
 
-  AFApplicationManager.prototype.unpauseApplication = function()
+  AFApplicationManager.prototype.unpauseAFApplication = function()
   {
   };
 
@@ -113,25 +113,38 @@ var AFApplication = (function()
   function AFApplication(applicationTitle)
   {
     var that = this;
-    // let's check out that manifest
+    // $.getJSON grabs the manifest which has the app's controller's name
     $.getJSON('applications/' + applicationTitle + '/config/AFManifest.json', function(data)
     {
-      $.getScript('applications/' + applicationTitle + '/controllers/' + applicationTitle + 'Controller.js', function(data)
+      this.manifest = data;
+
+      // need to get a pointer to the js that gets executed by $.getScript
+      $.getScript('applications/' + this.manifest.controller + '/controllers/' + this.manifest.controller + 'Controller.js', function(data)
       {
         var controllerName = applicationTitle + 'Controller';
         console.log(data);
-        console.log(controllerName);
-        window[controllerName]();
+        //console.log(controllerName);
+        //window[controllerName]();
       });
     });
   }
 
   AFApplication.prototype = new AFObject();
 
-  AFApplication.prototype.setMarkup = function(markup)
+  AFApplication.prototype.startApplication = function()
   {
-    this.markup = markup;
-    console.log(markup);
+  };
+
+  AFApplication.prototype.stopApplication = function()
+  {
+  };
+
+  AFApplication.prototype.pauseApplication = function()
+  {
+  };
+
+  AFApplication.prototype.unpauseApplication = function()
+  {
   };
 
   return AFApplication;

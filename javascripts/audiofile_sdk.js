@@ -3,6 +3,7 @@
 'use strict';
 var AFObject = (function()
 {
+  // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
   function AFObject()
   {}
 
@@ -16,6 +17,8 @@ var AFController = (function()
 
   AFController.prototype = new AFObject();
 
+  // All Application controllers have AFController as their prototype and should
+  // implement a method for all 4 stages of the Application Lifecycle
   AFController.prototype.onAFApplicationStart = function()
   {
     console.log('AFController onAFApplicationStart called');
@@ -38,6 +41,7 @@ var AFController = (function()
 
 var AFCore = (function()
 {
+  // This is the first and only Object created from the audiofile_sdk index.html file
   function AFCore()
   {
     var afCoreController = new AFCoreController();
@@ -51,6 +55,7 @@ var AFCore = (function()
 
 var AFCoreController = (function()
 {
+  // The Controller which runs the Lifecycle of the AudioFile Framework/SDK
   function AFCoreController()
   {}
 
@@ -70,6 +75,7 @@ var AFCoreController = (function()
 
 var AFApplicationManager = (function()
 {
+  // Manages the Applications. Creates new AFApplications
   function AFApplicationManager()
   {
     this.activeApplication = null;
@@ -107,6 +113,7 @@ var AFApplication = (function()
   function AFApplication(applicationTitle)
   {
     var that = this;
+    // let's check out that manifest
     $.getJSON('applications/' + applicationTitle + '/config/AFManifest.json', function(data)
     {
       $.getScript('applications/' + applicationTitle + '/controllers/' + applicationTitle + 'Controller.js', function(data)
@@ -120,12 +127,6 @@ var AFApplication = (function()
   }
 
   AFApplication.prototype = new AFObject();
-
-  AFApplication.prototype.setMarkup = function(markup)
-  {
-    this.markup = markup;
-    console.log(markup);
-  };
 
   AFApplication.prototype.setMarkup = function(markup)
   {

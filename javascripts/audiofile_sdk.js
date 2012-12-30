@@ -108,13 +108,38 @@ var AFApplicationManager = (function()
   return AFApplicationManager;
 })();
 
+var AFWebWorker = (function()
+{
+  function AFWebWorker(applicationController)
+  {
+    // TODO create AFBlob Object
+    var blob = new Blob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
+
+    this.webWorker = new Worker(URL.createObjectURL(blob));
+    this.webWorker.onmessage = function(e) {
+      console.log('Response: ' + e.data);
+    };
+    this.webWorker.postMessage('Test');
+    //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
+    //console.log(webWorker);
+  }
+
+  AFWebWorker.prototype = new AFObject();
+
+  AFWebWorker.prototype.postMessage = function(message)
+  {
+    this.webWorker.postMessage(message);
+  };
+
+  return AFWebWorker;
+})();
+
 var AFApplication = (function()
 {
   function AFApplication(applicationController)
   {
+    // asynchronously set applicationManifest, applicationController, and applicationDOM properties
     this.getApplicationManifest(applicationController);
-    this.getApplicationController(applicationController);
-    this.getApplicationDOM(applicationController);
   }
 
   AFApplication.prototype = new AFObject();
@@ -126,6 +151,7 @@ var AFApplication = (function()
     $.getJSON('applications/' + applicationController + '/config/AFManifest.json', function(data)
     {
       ctx.applicationManifest = data;
+      ctx.getApplicationController(applicationController);
     });
   };
 
@@ -136,17 +162,24 @@ var AFApplication = (function()
     $.getScript('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js', function(data)
     {
       ctx.applicationController = new window[applicationController + 'Controller']();
-      ctx.startApplication(ctx.applicationController);
+      ctx.getApplicationDOM(applicationController);
     });
   };
 
-  AFApplication.prototype.getApplicationDOM= function(applicationController)
+  AFApplication.prototype.getApplicationDOM = function(applicationController)
   {
     var ctx = this;
     $.get('applications/' + applicationController + '/views/index.html', function(data)
     {
       ctx.applicationDOM = data;
+      ctx.createWebWorker(applicationController);
     });
+  };
+
+  AFApplication.prototype.createWebWorker = function(applicationController)
+  {
+    var worker = new AFWebWorker(applicationController);
+    //ctx.startApplication(ctx.applicationController);
   };
 
   AFApplication.prototype.startApplication = function(applicationController)
@@ -204,7 +237,7 @@ var AFSDK = (function()
       domModules.push('AFUIGeneticsLab');
     }
 
-    this.UI = new AFUI(this);
+    this.UI = new FUI(this);
     this.UI.buildDom(domModules);
 
     //if(settings.modules.parser === true)
@@ -309,6 +342,7 @@ var AFUIGeneticsLab = (function()
     $(dnaOutputContainer).append(dnaList);
     $(container).append(dnaOutputContainer);
 
+    $('#foobar').append(container);
     return container;
   };
 

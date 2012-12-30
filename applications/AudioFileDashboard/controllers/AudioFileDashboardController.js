@@ -1,26 +1,21 @@
 var AudioFileDashboardController = (function(){
   function AudioFileDashboardController()
-  {
-    console.log('created twice!');
-  }
+  {}
 
   AudioFileDashboardController.prototype = new AudioFileDashboardController();
 
   AudioFileDashboardController.prototype.onAFApplicationStart = function()
   {
-    console.log('AudioFileDashboardController onAFApplicationStart called');
+    var foo = 'bar';
   };
 
   AudioFileDashboardController.prototype.onAFApplicationStop = function()
-  {
-  };
+  {};
 
   AudioFileDashboardController.prototype.onAFApplicationPause = function()
-  {
-  };
+  {};
 
   AudioFileDashboardController.prototype.onAFApplicationUnpause = function()
-  {
-  };
+  {};
   return AudioFileDashboardController;
 })();

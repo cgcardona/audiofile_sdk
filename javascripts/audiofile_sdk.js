@@ -116,12 +116,7 @@ var AFWebWorker = (function()
     var blob = new Blob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
 
     this.webWorker = new Worker(URL.createObjectURL(blob));
-    this.webWorker.onmessage = function(e) {
-      console.log('Response: ' + e.data);
-    };
-    this.webWorker.postMessage('Test');
     //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
-    //console.log(webWorker);
   }
 
   AFWebWorker.prototype = new AFObject();
@@ -131,54 +126,66 @@ var AFWebWorker = (function()
     this.webWorker.postMessage(message);
   };
 
+  AFWebWorker.prototype.onMessage = function(message)
+  {
+    console.log('Response: ' + message);
+  };
+
   return AFWebWorker;
 })();
 
 var AFApplication = (function()
 {
-  function AFApplication(applicationController)
+  function AFApplication(applicationControllerName)
   {
+    this.applicationControllerName = applicationControllerName;
     // asynchronously set applicationManifest, applicationController, and applicationDOM properties
-    this.getApplicationManifest(applicationController);
+    this.getApplicationManifest();
   }
 
   AFApplication.prototype = new AFObject();
 
-  AFApplication.prototype.getApplicationManifest = function(applicationController)
+  AFApplication.prototype.getApplicationManifest = function()
   {
     var ctx = this;
     // $.getJSON grabs the manifest which has the app's controller's name
-    $.getJSON('applications/' + applicationController + '/config/AFManifest.json', function(data)
+    $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
     {
       ctx.applicationManifest = data;
-      ctx.getApplicationController(applicationController);
+      ctx.getApplicationController();
     });
   };
 
-  AFApplication.prototype.getApplicationController = function(applicationController)
+  AFApplication.prototype.getApplicationController = function()
   {
     var ctx = this;
     // need to get a pointer to the js that gets executed by $.getScript
-    $.getScript('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js', function(data)
+    $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data)
     {
-      ctx.applicationController = new window[applicationController + 'Controller']();
-      ctx.getApplicationDOM(applicationController);
+      ctx.applicationController = new window[ctx.applicationControllerName + 'Controller']();
+      ctx.getApplicationDOM();
     });
   };
 
-  AFApplication.prototype.getApplicationDOM = function(applicationController)
+  AFApplication.prototype.getApplicationDOM = function()
   {
     var ctx = this;
-    $.get('applications/' + applicationController + '/views/index.html', function(data)
+    $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
     {
       ctx.applicationDOM = data;
-      ctx.createWebWorker(applicationController);
+      ctx.createWebWorker();
     });
   };
 
-  AFApplication.prototype.createWebWorker = function(applicationController)
+  AFApplication.prototype.createWebWorker = function()
   {
-    var worker = new AFWebWorker(applicationController);
+    var afWebWorker = new AFWebWorker(this.applicationControllerName);
+    afWebWorker.postMessage('Test');
+
+    afWebWorker.webWorker.onmessage = function(event)
+    {
+      afWebWorker.onMessage(event.data);
+    };
     //ctx.startApplication(ctx.applicationController);
   };
 

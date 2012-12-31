@@ -112,8 +112,9 @@ var AFWebWorker = (function()
 {
   function AFWebWorker(applicationController)
   {
-    var blob = new AFBlob("self.onmessage=function(e){postMessage('Worker: '+e.data);}");
+    var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
     var afURL = new AFURL();
+
     console.log(afURL.createObjectURL(blob.afBlob));
     this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
     //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
@@ -136,9 +137,9 @@ var AFWebWorker = (function()
 
 var AFBlob = (function()
 {
-  function AFBlob(scriptString)
+  function AFBlob(scriptArray)
   {
-    this.afBlob = new Blob([scriptString]);
+    this.afBlob = new Blob(scriptArray);
   }
 
   AFBlob.prototype = new AFObject();
@@ -152,14 +153,14 @@ var AFURL = (function()
   {
   }
 
-  AFBlob.prototype = new AFObject();
+  AFURL.prototype = new AFObject();
 
-  AFBlob.prototype.createObjectURL = function(afBlob)
+  AFURL.prototype.createObjectURL = function(afBlob)
   {
-    return URL.createObjectURL(afBlob)
+    return URL.createObjectURL(afBlob);
   };
 
-  return AFBlob;
+  return AFURL;
 })();
 
 
@@ -168,6 +169,7 @@ var AFApplication = (function()
   function AFApplication(applicationControllerName)
   {
     this.applicationControllerName = applicationControllerName;
+
     // asynchronously set applicationManifest, applicationController, and applicationDOM properties
     this.getApplicationManifest();
   }

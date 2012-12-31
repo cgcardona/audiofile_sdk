@@ -112,10 +112,10 @@ var AFWebWorker = (function()
 {
   function AFWebWorker(applicationController)
   {
-    // TODO create AFBlob Object
-    var blob = new Blob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
-
-    this.webWorker = new Worker(URL.createObjectURL(blob));
+    var blob = new AFBlob("self.onmessage=function(e){postMessage('Worker: '+e.data);}");
+    var afURL = new AFURL();
+    console.log(afURL.createObjectURL(blob.afBlob));
+    this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
     //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
   }
 
@@ -133,6 +133,35 @@ var AFWebWorker = (function()
 
   return AFWebWorker;
 })();
+
+var AFBlob = (function()
+{
+  function AFBlob(scriptString)
+  {
+    this.afBlob = new Blob([scriptString]);
+  }
+
+  AFBlob.prototype = new AFObject();
+
+  return AFBlob;
+})();
+
+var AFURL = (function()
+{
+  function AFURL()
+  {
+  }
+
+  AFBlob.prototype = new AFObject();
+
+  AFBlob.prototype.createObjectURL = function(afBlob)
+  {
+    return URL.createObjectURL(afBlob)
+  };
+
+  return AFBlob;
+})();
+
 
 var AFApplication = (function()
 {

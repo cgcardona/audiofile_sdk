@@ -1,12 +1,13 @@
 /*global $:false */
 /*global console:false */
 'use strict';
+
+// All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
 var AFObject = (function()
 {
-  // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
   function AFObject()
   {}
-
+  
   return AFObject;
 })();
 
@@ -15,13 +16,12 @@ var AFController = (function()
   function AFController()
   {}
 
-  AFController.prototype = new AFObject();
+  AFController.prototype = Object.create(AFObject.prototype);
 
   // All Application controllers have AFController as their prototype and should
   // implement a method for all 4 stages of the Application Lifecycle
   AFController.prototype.onAFApplicationStart = function()
   {
-    console.log('AFController onAFApplicationStart called');
   };
 
   AFController.prototype.onAFApplicationStop = function()
@@ -46,9 +46,11 @@ var AFCore = (function()
   {
     var afCoreController = new AFCoreController();
     afCoreController.onAFApplicationStart();
+    var foobartmp = new AFPasswordInputField(true, 'life is a breeze');
+    console.dir(foobartmp);
   }
 
-  AFCore.prototype = new AFObject();
+  AFCore.prototype = Object.create(AFObject.prototype);
 
   return AFCore;
 })();
@@ -67,7 +69,6 @@ var AFCoreController = (function()
     afApplicationManager.startAFApplication({
       "controller" : "AudioFileDashboard"
     });
-    //return AFController.prototype.onAFApplicationStart.call(this);
   };
 
   return AFCoreController;
@@ -82,7 +83,7 @@ var AFApplicationManager = (function()
     this.hasActiveApplication = false;
   }
 
-  AFApplicationManager.prototype = new AFObject();
+  AFApplicationManager.prototype = Object.create(AFObject.prototype);
 
   AFApplicationManager.prototype.startAFApplication = function(startAppJson)
   {
@@ -110,17 +111,17 @@ var AFApplicationManager = (function()
 
 var AFWebWorker = (function()
 {
-  function AFWebWorker(applicationController)
+  function AFWebWorker(onAFApplicationStartFuncStr)
   {
+    //console.log(onAFApplicationStartFuncStr);
     var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
     var afURL = new AFURL();
 
-    console.log(afURL.createObjectURL(blob.afBlob));
     this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
     //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
   }
 
-  AFWebWorker.prototype = new AFObject();
+  AFWebWorker.prototype = Object.create(AFObject.prototype);
 
   AFWebWorker.prototype.postMessage = function(message)
   {
@@ -129,7 +130,7 @@ var AFWebWorker = (function()
 
   AFWebWorker.prototype.onMessage = function(message)
   {
-    console.log('Response: ' + message);
+    //console.log('Response: ' + message);
   };
 
   return AFWebWorker;
@@ -142,9 +143,71 @@ var AFBlob = (function()
     this.afBlob = new Blob(scriptArray);
   }
 
-  AFBlob.prototype = new AFObject();
+  AFBlob.prototype = Object.create(AFObject.prototype);
 
   return AFBlob;
+})();
+
+var AFForm = (function()
+{
+  function AFForm(action, method)
+  {
+    this.action = action;
+    this.method = method || 'POST';
+    // Create DOM reference
+  }
+
+  AFForm.prototype = Object.create(AFObject.prototype);
+
+  return AFForm;
+})();
+
+var AFInputField = (function(){
+
+  function AFInputField()
+  {
+    AFObject.call(this);
+  }
+  AFInputField.prototype = Object.create(AFObject.prototype);
+
+  return AFInputField;
+})();
+
+function AFTextInputField(autofocus, placeholder, value)
+{
+  AFInputField.call(this);
+//console.dir(arguments);
+  this.autofocus = autofocus || false;
+  this.placeholder = placeholder || null;
+  this.type = 'text';
+  this.value = value || null;
+}
+
+AFTextInputField.prototype = new AFInputField();
+
+var AFPasswordInputField = (function()
+{
+  function AFPasswordInputField(autofocus, placeholder)
+  {
+    this.type = 'password';
+    return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+  }
+
+  AFPasswordInputField.prototype = new AFTextInputField();
+
+  return AFPasswordInputField;
+})();
+
+var AFEmailInputField = (function()
+{
+  function AFEmailInputField(autofocus, placeholder, value)
+  {
+    this.type = 'email';
+  }
+
+  AFEmailInputField.prototype = new AFTextInputField();
+
+  return AFEmailInputField;
 })();
 
 var AFURL = (function()
@@ -153,7 +216,7 @@ var AFURL = (function()
   {
   }
 
-  AFURL.prototype = new AFObject();
+  AFURL.prototype = Object.create(AFObject.prototype);
 
   AFURL.prototype.createObjectURL = function(afBlob)
   {
@@ -174,7 +237,7 @@ var AFApplication = (function()
     this.getApplicationManifest();
   }
 
-  AFApplication.prototype = new AFObject();
+  AFApplication.prototype = Object.create(AFObject.prototype);
 
   AFApplication.prototype.getApplicationManifest = function()
   {
@@ -204,20 +267,21 @@ var AFApplication = (function()
     $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
     {
       ctx.applicationDOM = data;
-      ctx.createWebWorker();
+      //ctx.createWebWorker();
     });
   };
 
   AFApplication.prototype.createWebWorker = function()
   {
-    var afWebWorker = new AFWebWorker(this.applicationControllerName);
+    var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
+    var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
     afWebWorker.postMessage('Test');
 
     afWebWorker.webWorker.onmessage = function(event)
     {
       afWebWorker.onMessage(event.data);
     };
-    //ctx.startApplication(ctx.applicationController);
+    //this.startApplication(this.applicationController);
   };
 
   AFApplication.prototype.startApplication = function(applicationController)
@@ -299,7 +363,6 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.updateSettings = function(settings)
   {
-  console.log(settings);
     this.gaGSInput     = settings.gaGSInput;
     this.gaGCInput     = settings.gaGCInput;
     this.gaDNABitCount = settings.gaDNABitCount;
@@ -324,14 +387,12 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.gradeDNA = function(dnaArray)
   {
-    console.log(this.gaDSSteps);
     $(dnaArray).each(function(indx, elmnt){
       var soundState = true;
       var tone = 0;
 
       for(var p = 0; p < elmnt.length; p++)
       {
-        //console.log(elmnt[p]);
       }
     });
   };

@@ -1,6 +1,7 @@
 var AudioFileDashboardController = (function(){
   function AudioFileDashboardController()
-  {}
+  {
+  }
 
   AudioFileDashboardController.prototype = new AudioFileDashboardController();
 

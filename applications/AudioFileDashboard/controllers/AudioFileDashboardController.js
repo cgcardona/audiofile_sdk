@@ -1,22 +1,15 @@
-var AudioFileDashboardController = (function(){
-  function AudioFileDashboardController()
-  {
-  }
+var AudioFileDashboardController = Object.create(AFController);
 
-  AudioFileDashboardController.prototype = new AudioFileDashboardController();
+AudioFileDashboardController.onAFApplicationStart = function()
+{
+  console.log('AudiofileDashboard Started!!!');
+};
 
-  AudioFileDashboardController.prototype.onAFApplicationStart = function()
-  {
-    var foo = 'bar';
-  };
+AudioFileDashboardController.onAFApplicationStop = function()
+{};
 
-  AudioFileDashboardController.prototype.onAFApplicationStop = function()
-  {};
+AudioFileDashboardController.onAFApplicationPause = function()
+{};
 
-  AudioFileDashboardController.prototype.onAFApplicationPause = function()
-  {};
-
-  AudioFileDashboardController.prototype.onAFApplicationUnpause = function()
-  {};
-  return AudioFileDashboardController;
-})();
+AudioFileDashboardController.onAFApplicationUnpause = function()
+{};

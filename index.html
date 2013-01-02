@@ -9,7 +9,8 @@
     <script src="javascripts/underscore.js"></script>
     <script src="javascripts/audiofile_sdk.js"></script>
     <script> window.onload = function() {
-      var afcore = new AFCore(); 
+      var afCore = Object.create(AFCore); 
+      afCore.init();
       //var afsdk = new AFSDK({
       //  'modules' : {
       //    'ga' : true

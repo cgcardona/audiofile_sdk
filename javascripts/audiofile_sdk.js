@@ -3,149 +3,165 @@
 'use strict';
 
 // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
-var AFObject = (function()
+var AFObject = {};
+AFObject.init = function(){};
+
+var AFController = Object.create(AFObject);
+// All Application controllers have AFController as their prototype and should implement a method for all 4 stages of the Application Lifecycle
+AFController.onAFApplicationStart = function()
+{};
+
+AFController.onAFApplicationStop = function()
+{};
+
+AFController.onAFApplicationPause = function()
+{};
+
+AFController.onAFApplicationUnpause = function()
+{};
+
+// AFCoreController runs the Lifecycle of the AudioFile Framework/SDK
+var AFCoreController = Object.create(AFController); 
+
+AFCoreController.onAFApplicationStart = function()
 {
-  function AFObject()
-  {}
-  
-  return AFObject;
-})();
+  var afApplicationManager = Object.create(AFApplicationManager);
+  afApplicationManager.startAFApplication({
+    "controller" : "AudioFileDashboard"
+  });
+};
 
-var AFController = (function()
-{
-  function AFController()
-  {}
-
-  AFController.prototype = Object.create(AFObject.prototype);
-
-  // All Application controllers have AFController as their prototype and should
-  // implement a method for all 4 stages of the Application Lifecycle
-  AFController.prototype.onAFApplicationStart = function()
-  {
-  };
-
-  AFController.prototype.onAFApplicationStop = function()
-  {
-  };
-
-  AFController.prototype.onAFApplicationPause = function()
-  {
-  };
-
-  AFController.prototype.onAFApplicationUnpause = function()
-  {
-  };
-
-  return AFController;
-})();
-
-var AFCore = (function()
-{
-  // This is the first and only Object created from the audiofile_sdk index.html file
-  function AFCore()
-  {
-    var afCoreController = new AFCoreController();
-    afCoreController.onAFApplicationStart();
+// AFApplicationManager Manages the Applications. Creates new AFApplications
+var AFApplicationManager = Object.create(AFObject, {
+  activeApplication : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
+  },
+  hasActiveApplication : {
+    congifurable : true,
+    enumerable   : true,
+    value        : false,
+    writable     : true
   }
+}); 
 
-  AFCore.prototype = Object.create(AFObject.prototype);
-
-  return AFCore;
-})();
-
-var AFCoreController = (function()
+AFApplicationManager.startAFApplication = function(startAppJson)
 {
-  // The Controller which runs the Lifecycle of the AudioFile Framework/SDK
-  function AFCoreController()
-  {}
-
-  AFCoreController.prototype = new AFController();
-
-  AFCoreController.prototype.onAFApplicationStart = function()
+  if(!this.hasActiveApplication)
   {
-    var afApplicationManager = new AFApplicationManager();
-    afApplicationManager.startAFApplication({
-      "controller" : "AudioFileDashboard"
-    });
-  };
-
-  return AFCoreController;
-})();
-
-var AFApplicationManager = (function()
-{
-  // Manages the Applications. Creates new AFApplications
-  function AFApplicationManager()
-  {
-    this.activeApplication = null;
-    this.hasActiveApplication = false;
+      this.activeApplication = Object.create(AFApplication);
+      this.hasActiveApplication = true;
+      this.activeApplication.init(startAppJson.controller);
   }
+};
 
-  AFApplicationManager.prototype = Object.create(AFObject.prototype);
+AFApplicationManager.stopAFApplication = function()
+{};
 
-  AFApplicationManager.prototype.startAFApplication = function(startAppJson)
-  {
-    console.dir(Object.create(AFApplication));
-    if(!this.activeApplication)
-    {
-        this.activeApplication = Object.create(AFApplication);
-        this.hasActiveApplication = true;
-    }
-  };
+AFApplicationManager.pauseAFApplication = function()
+{};
 
-  AFApplicationManager.prototype.stopAFApplication = function()
-  {
-  };
+AFApplicationManager.unpauseAFApplication = function()
+{};
 
-  AFApplicationManager.prototype.pauseAFApplication = function()
-  {
-  };
+var AFApplication = Object.create(AFObject);
 
-  AFApplicationManager.prototype.unpauseAFApplication = function()
-  {
-  };
-
-  return AFApplicationManager;
-})();
-
-var AFWebWorker = (function()
+AFApplication.init = function(applicationControllerName)
 {
-  function AFWebWorker(onAFApplicationStartFuncStr)
-  {
-    //console.log(onAFApplicationStartFuncStr);
-    var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
-    var afURL = new AFURL();
+ 
+  this.applicationControllerName = applicationControllerName;
+  this.getApplicationManifest();
 
-    this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
-    //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
-  }
+};
 
-  AFWebWorker.prototype = Object.create(AFObject.prototype);
-
-  AFWebWorker.prototype.postMessage = function(message)
-  {
-    this.webWorker.postMessage(message);
-  };
-
-  AFWebWorker.prototype.onMessage = function(message)
-  {
-    //console.log('Response: ' + message);
-  };
-
-  return AFWebWorker;
-})();
-
-var AFBlob = (function()
+AFApplication.getApplicationManifest = function()
 {
-  function AFBlob(scriptArray)
+  var ctx = this;
+  // $.getJSON grabs the manifest which has the app's controller's name
+  $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
   {
-    this.afBlob = new Blob(scriptArray);
-  }
+    ctx.applicationManifest = data;
+    ctx.getApplicationController();
+  });
+};
 
-  AFBlob.prototype = Object.create(AFObject.prototype);
+AFApplication.getApplicationController = function()
+{
+//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+  var ctx = this;
+  // need to get a pointer to the js that gets executed by $.getScript
+  $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data, textStatus, jqxhr)
+  {
+    ctx.applicationController = Object.create(window[ctx.applicationControllerName + 'Controller']);
+    ctx.getApplicationDOM();
+  });
+};
 
-  return AFBlob;
-})();
+AFApplication.getApplicationDOM = function()
+{
+  var ctx = this;
+  $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
+  {
+    ctx.applicationDOM = data;
+    ctx.startApplication();
+    //ctx.createWebWorker();
+  });
+};
+
+AFApplication.startApplication = function()
+{
+  // ApplicationController also got created with the getScript above. Need to figure that out
+  // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
+
+  this.applicationController.onAFApplicationStart();
+
+};
+
+AFApplication.stopApplication = function(){};
+
+AFApplication.pauseApplication = function(){};
+
+AFApplication.unpauseApplication = function(){};
+
+AFApplication.createWebWorker = function()
+{
+  var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
+  var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
+  afWebWorker.postMessage('Test');
+
+  afWebWorker.webWorker.onmessage = function(event)
+  {
+    afWebWorker.onMessage(event.data);
+  };
+};
+
+var AFWebWorker = Object.create(AFObject)
+AFWebWorker.init = function(onAFApplicationStartFuncStr)
+{
+  var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
+  var afURL = new AFURL();
+
+  this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
+  //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
+};
+
+AFWebWorker.postMessage = function(message)
+{
+  this.webWorker.postMessage(message);
+};
+
+AFWebWorker.onMessage = function(message)
+{
+  //console.log('Response: ' + message);
+};
+
+var AFBlob = Object.create(AFObject); 
+AFBlob.init = function(scriptArray)
+{
+  this.afBlob = new Blob(scriptArray);
+};
 
 var AFForm = Object.create(AFObject, {
   action : {
@@ -162,7 +178,7 @@ var AFForm = Object.create(AFObject, {
   }
 });
 
-var AFInputField = Object.create(AFObject.prototype);
+var AFInputField = Object.create(AFObject);
 
 var AFTextInputField = Object.create(AFInputField, {
   autofocus   : {
@@ -209,98 +225,21 @@ var AFEmailInputField= Object.create(AFTextInputField, {
   }
 });
 
-var AFURL = (function()
+var AFURL = Object.create(AFObject); 
+AFURL.createObjectURL = function(afBlob)
 {
-  function AFURL()
-  {
-  }
-
-  AFURL.prototype = Object.create(AFObject.prototype);
-
-  AFURL.prototype.createObjectURL = function(afBlob)
-  {
-    return URL.createObjectURL(afBlob);
-  };
-
-  return AFURL;
-})();
-
-
-var AFApplication = Object.create(AFObject, {
-  applicationControllerName : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  }
-});
-
-AFApplication.prototype.getApplicationManifest = function()
-{
-  var ctx = this;
-  // $.getJSON grabs the manifest which has the app's controller's name
-  $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
-  {
-    ctx.applicationManifest = data;
-    ctx.getApplicationController();
-  });
+  return URL.createObjectURL(afBlob);
 };
 
-AFApplication.prototype.getApplicationController = function()
+// This is the first and only Object created from the audiofile_sdk index.html file
+var AFCore = Object.create(AFObject);
+AFCore.init = function()
 {
-//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
-  var ctx = this;
-  // need to get a pointer to the js that gets executed by $.getScript
-  $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data)
-  {
-    ctx.applicationController = new window[ctx.applicationControllerName + 'Controller']();
-    ctx.getApplicationDOM();
-  });
+  var afCoreController = Object.create(AFCoreController);
+  afCoreController.onAFApplicationStart();
 };
 
-AFApplication.prototype.getApplicationDOM = function()
-{
-  var ctx = this;
-  $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
-  {
-    ctx.applicationDOM = data;
-    //ctx.createWebWorker();
-  });
-};
-
-AFApplication.prototype.createWebWorker = function()
-{
-  var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
-  var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
-  afWebWorker.postMessage('Test');
-
-  afWebWorker.webWorker.onmessage = function(event)
-  {
-    afWebWorker.onMessage(event.data);
-  };
-  //this.startApplication(this.applicationController);
-};
-
-AFApplication.prototype.startApplication = function(applicationController)
-{
-  // ApplicatoinController also got created with the getScript above. Need to figure that out
-  // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
-  applicationController.onAFApplicationStart();
-
-};
-
-AFApplication.prototype.stopApplication = function()
-{
-};
-
-AFApplication.prototype.pauseApplication = function()
-{
-};
-
-AFApplication.prototype.unpauseApplication = function()
-{
-};
-
+// Below here is where i'm just stashing stuff and none of this should be getting used (in theory)
 var AFUI = (function()
 {
   function AFUI(context)

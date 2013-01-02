@@ -46,8 +46,6 @@ var AFCore = (function()
   {
     var afCoreController = new AFCoreController();
     afCoreController.onAFApplicationStart();
-    var foobartmp = new AFPasswordInputField(true, 'life is a breeze');
-    console.dir(foobartmp);
   }
 
   AFCore.prototype = Object.create(AFObject.prototype);
@@ -87,9 +85,10 @@ var AFApplicationManager = (function()
 
   AFApplicationManager.prototype.startAFApplication = function(startAppJson)
   {
+    console.dir(Object.create(AFApplication));
     if(!this.activeApplication)
     {
-        this.activeApplication = new AFApplication(startAppJson.controller);
+        this.activeApplication = Object.create(AFApplication);
         this.hasActiveApplication = true;
     }
   };
@@ -148,67 +147,67 @@ var AFBlob = (function()
   return AFBlob;
 })();
 
-var AFForm = (function()
-{
-  function AFForm(action, method)
-  {
-    this.action = action;
-    this.method = method || 'POST';
-    // Create DOM reference
+var AFForm = Object.create(AFObject, {
+  action : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
+  },
+  method : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'POST',
+    writable     : true
   }
+});
 
-  AFForm.prototype = Object.create(AFObject.prototype);
+var AFInputField = Object.create(AFObject.prototype);
 
-  return AFForm;
-})();
-
-var AFInputField = (function(){
-
-  function AFInputField()
-  {
-    AFObject.call(this);
+var AFTextInputField = Object.create(AFInputField, {
+  autofocus   : {
+    congifurable : true,
+    enumerable   : true,
+    value        : false,
+    writable     : true
+  },
+  placeholder : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
+  },
+  type        : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'text',
+    writable     : true
+  },
+  value       : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
   }
-  AFInputField.prototype = Object.create(AFObject.prototype);
+});
 
-  return AFInputField;
-})();
-
-function AFTextInputField(autofocus, placeholder, value)
-{
-  AFInputField.call(this);
-//console.dir(arguments);
-  this.autofocus = autofocus || false;
-  this.placeholder = placeholder || null;
-  this.type = 'text';
-  this.value = value || null;
-}
-
-AFTextInputField.prototype = new AFInputField();
-
-var AFPasswordInputField = (function()
-{
-  function AFPasswordInputField(autofocus, placeholder)
-  {
-    this.type = 'password';
-    return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+var AFPasswordInputField = Object.create(AFTextInputField, {
+  type        : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'password',
+    writable     : true
   }
+});
 
-  AFPasswordInputField.prototype = new AFTextInputField();
-
-  return AFPasswordInputField;
-})();
-
-var AFEmailInputField = (function()
-{
-  function AFEmailInputField(autofocus, placeholder, value)
-  {
-    this.type = 'email';
+var AFEmailInputField= Object.create(AFTextInputField, {
+  type        : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'email',
+    writable     : true
   }
-
-  AFEmailInputField.prototype = new AFTextInputField();
-
-  return AFEmailInputField;
-})();
+});
 
 var AFURL = (function()
 {
@@ -227,85 +226,80 @@ var AFURL = (function()
 })();
 
 
-var AFApplication = (function()
-{
-  function AFApplication(applicationControllerName)
-  {
-    this.applicationControllerName = applicationControllerName;
-
-    // asynchronously set applicationManifest, applicationController, and applicationDOM properties
-    this.getApplicationManifest();
+var AFApplication = Object.create(AFObject, {
+  applicationControllerName : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
   }
+});
 
-  AFApplication.prototype = Object.create(AFObject.prototype);
-
-  AFApplication.prototype.getApplicationManifest = function()
+AFApplication.prototype.getApplicationManifest = function()
+{
+  var ctx = this;
+  // $.getJSON grabs the manifest which has the app's controller's name
+  $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
   {
-    var ctx = this;
-    // $.getJSON grabs the manifest which has the app's controller's name
-    $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
-    {
-      ctx.applicationManifest = data;
-      ctx.getApplicationController();
-    });
-  };
+    ctx.applicationManifest = data;
+    ctx.getApplicationController();
+  });
+};
 
-  AFApplication.prototype.getApplicationController = function()
+AFApplication.prototype.getApplicationController = function()
+{
+//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+  var ctx = this;
+  // need to get a pointer to the js that gets executed by $.getScript
+  $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data)
   {
-    var ctx = this;
-    // need to get a pointer to the js that gets executed by $.getScript
-    $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data)
-    {
-      ctx.applicationController = new window[ctx.applicationControllerName + 'Controller']();
-      ctx.getApplicationDOM();
-    });
-  };
+    ctx.applicationController = new window[ctx.applicationControllerName + 'Controller']();
+    ctx.getApplicationDOM();
+  });
+};
 
-  AFApplication.prototype.getApplicationDOM = function()
+AFApplication.prototype.getApplicationDOM = function()
+{
+  var ctx = this;
+  $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
   {
-    var ctx = this;
-    $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
-    {
-      ctx.applicationDOM = data;
-      //ctx.createWebWorker();
-    });
-  };
+    ctx.applicationDOM = data;
+    //ctx.createWebWorker();
+  });
+};
 
-  AFApplication.prototype.createWebWorker = function()
+AFApplication.prototype.createWebWorker = function()
+{
+  var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
+  var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
+  afWebWorker.postMessage('Test');
+
+  afWebWorker.webWorker.onmessage = function(event)
   {
-    var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
-    var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
-    afWebWorker.postMessage('Test');
-
-    afWebWorker.webWorker.onmessage = function(event)
-    {
-      afWebWorker.onMessage(event.data);
-    };
-    //this.startApplication(this.applicationController);
+    afWebWorker.onMessage(event.data);
   };
+  //this.startApplication(this.applicationController);
+};
 
-  AFApplication.prototype.startApplication = function(applicationController)
-  {
-    // ApplicatoinController also got created with the getScript above. Need to figure that out
-    // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
-    applicationController.onAFApplicationStart();
+AFApplication.prototype.startApplication = function(applicationController)
+{
+  // ApplicatoinController also got created with the getScript above. Need to figure that out
+  // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
+  applicationController.onAFApplicationStart();
 
-  };
+};
 
-  AFApplication.prototype.stopApplication = function()
-  {
-  };
+AFApplication.prototype.stopApplication = function()
+{
+};
 
-  AFApplication.prototype.pauseApplication = function()
-  {
-  };
+AFApplication.prototype.pauseApplication = function()
+{
+};
 
-  AFApplication.prototype.unpauseApplication = function()
-  {
-  };
-
-  return AFApplication;
-})();
+AFApplication.prototype.unpauseApplication = function()
+{
+};
 
 var AFUI = (function()
 {

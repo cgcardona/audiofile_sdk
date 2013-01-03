@@ -327,7 +327,7 @@ AFUtility.createPropertiesObject = function(propertiesDataArray)
   propertiesDataArray.forEach(function(element, index)
   {
     returnObject[element[0]] = {
-      value        : element[1] ? element[1] : null,
+      value        : element[1] ? element[1] : undefined,
       writable     : element[2] ? element[2] : true,
       enumerable   : element[3] ? element[3] : true,
       congifurable : element[4] ? element[4] : true,

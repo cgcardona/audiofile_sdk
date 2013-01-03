@@ -9,7 +9,6 @@
 // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
 var AFObject = {};
 AFObject.init = function(){};
-AFObject.setPropVal = function(propName, propValue){this[propName] = propValue;};
 
 var AFController = Object.create(AFObject);
 // All Application controllers have AFController as their prototype and should implement a method for all 4 stages of the Application Lifecycle
@@ -192,6 +191,11 @@ AFLayout.setView = function(afViewObj)
   this.afView = Object.create(afViewObj);
 };
 
+AFLayout.setChild = function(AFLayoutItemObj)
+{
+ // build DOM here
+};
+
 var AFListLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
   [
     ['listItemCount', 1]
@@ -269,10 +273,10 @@ var AFText = Object.create(AFObject, AFUtility.createPropertiesObject(
   [
     ['textValue', null],
     ['fontWeight', 200],
+    ['fontColor', '#000'],
     ['fontFamily', 'helvetica']
   ]
 ));
-console.log(AFText);
 
 var AFHeader = Object.create(AFText, AFUtility.createPropertiesObject(
   [

@@ -9,20 +9,17 @@
 // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
 var AFObject = {};
 AFObject.init = function(){};
+AFObject.setPropVal = function(propName, propValue){this[propName] = propValue;};
 
 var AFController = Object.create(AFObject);
 // All Application controllers have AFController as their prototype and should implement a method for all 4 stages of the Application Lifecycle
-AFController.onAFApplicationStart = function()
-{};
+AFController.onAFApplicationStart = function(){};
 
-AFController.onAFApplicationStop = function()
-{};
+AFController.onAFApplicationStop = function(){};
 
-AFController.onAFApplicationPause = function()
-{};
+AFController.onAFApplicationPause = function(){};
 
-AFController.onAFApplicationUnpause = function()
-{};
+AFController.onAFApplicationUnpause = function(){};
 
 // AFCoreController runs the Lifecycle of the AudioFile Framework/SDK
 var AFCoreController = Object.create(AFController); 
@@ -61,14 +58,11 @@ AFApplicationManager.startAFApplication = function(startAppJson)
   }
 };
 
-AFApplicationManager.stopAFApplication = function()
-{};
+AFApplicationManager.stopAFApplication = function(){};
 
-AFApplicationManager.pauseAFApplication = function()
-{};
+AFApplicationManager.pauseAFApplication = function(){};
 
-AFApplicationManager.unpauseAFApplication = function()
-{};
+AFApplicationManager.unpauseAFApplication = function(){};
 
 var AFApplication = Object.create(AFObject);
 
@@ -184,6 +178,12 @@ var AFLayout = Object.create(AFObject,{
     enumerable   : true,
     value        : null,
     writable     : true
+  },
+  displayStyle : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'block',
+    writable     : true
   }
 });
 
@@ -213,6 +213,10 @@ var AFColumnLayout = Object.create(AFLayout, {
     writable     : true
   }
 });
+AFColumnLayout.setColumns = function(columnsObj)
+{
+  console.log(columnsObj);
+};
 
 var AFGridLayout = Object.create(AFLayout, {
   rowCount : {
@@ -228,10 +232,16 @@ var AFLayoutItem = Object.create(AFLayout);
 var AFListLayoutItem = Object.create(AFLayoutItem);
 
 var AFColumnLayoutItem = Object.create(AFLayoutItem, {
-  gridItemWidthPercentage : {
+  columnItemWidthPercentage : {
     congifurable : true,
     enumerable   : true,
     value        : 100,
+    writable     : true
+  },
+  displayStyle : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 'inline',
     writable     : true
   }
 });

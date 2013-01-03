@@ -215,7 +215,7 @@ var AFColumnLayout = Object.create(AFLayout, {
 });
 AFColumnLayout.setColumns = function(columnsObj)
 {
-  console.log(columnsObj);
+  //console.log(columnsObj);
 };
 
 var AFGridLayout = Object.create(AFLayout, {
@@ -313,6 +313,44 @@ var AFEmailInputField= Object.create(AFTextInputField, {
     congifurable : true,
     enumerable   : true,
     value        : 'email',
+    writable     : true
+  }
+});
+
+var AFUtility = Object.create(AFObject);
+
+
+AFUtility.createPropertiesObject = function(propertiesDataArray)
+{
+  var returnObject= {};
+
+  propertiesDataArray.forEach(function(element, index)
+  {
+    returnObject[element[0]] = {
+      value        : element[1] ? element[1] : null,
+      writable     : element[2] ? element[2] : true,
+      enumerable   : element[3] ? element[3] : true,
+      congifurable : element[4] ? element[4] : true,
+    };
+  });
+
+  return returnObject;
+};
+
+var AFText = Object.create(AFObject, AFUtility.createPropertiesObject(
+  [
+    ['textValue', null],
+    ['fontWeight', 200],
+    ['fontFamily', 'helvetica']
+  ]
+));
+console.log(AFText);
+
+var AFHeader = Object.create(AFText, {
+  type        : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 1,
     writable     : true
   }
 });

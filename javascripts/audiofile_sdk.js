@@ -21,6 +21,25 @@ AFController.onAFApplicationPause = function(){};
 
 AFController.onAFApplicationUnpause = function(){};
 
+var AFUtility = Object.create(AFObject);
+
+AFUtility.createPropertiesObject = function(propertiesDataArray)
+{
+  var returnObject= {};
+
+  propertiesDataArray.forEach(function(element, index)
+  {
+    returnObject[element[0]] = {
+      value        : element[1] ? element[1] : undefined,
+      writable     : element[2] ? element[2] : true,
+      enumerable   : element[3] ? element[3] : true,
+      congifurable : element[4] ? element[4] : true
+    };
+  });
+
+  return returnObject;
+};
+
 // AFCoreController runs the Lifecycle of the AudioFile Framework/SDK
 var AFCoreController = Object.create(AFController); 
 
@@ -33,20 +52,12 @@ AFCoreController.onAFApplicationStart = function()
 };
 
 // AFApplicationManager Manages the Applications. Creates new AFApplications
-var AFApplicationManager = Object.create(AFObject, {
-  activeApplication : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  },
-  hasActiveApplication : {
-    congifurable : true,
-    enumerable   : true,
-    value        : false,
-    writable     : true
-  }
-}); 
+var AFApplicationManager = Object.create(AFObject, AFUtility.createPropertiesObject(
+  [
+    ['activeApplication', null],
+    ['hasActiveApplication', false]
+  ])
+); 
 
 AFApplicationManager.startAFApplication = function(startAppJson)
 {
@@ -156,14 +167,11 @@ AFBlob.init = function(scriptArray)
   this.afBlob = new Blob(scriptArray);
 };
 
-var AFView = Object.create(AFObject,{
-  afLayout : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  }
-});
+var AFView = Object.create(AFObject,AFUtility.createPropertiesObject(
+  [
+    ['afLayout', null]
+  ])
+);
 
 AFView.setLayout = function(afLayoutObj)
 {
@@ -172,170 +180,90 @@ AFView.setLayout = function(afLayoutObj)
 
 var AFApplicationView = Object.create(AFView);
 
-var AFLayout = Object.create(AFObject,{
-  afApplicationView : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  },
-  displayStyle : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'block',
-    writable     : true
-  }
-});
+var AFLayout = Object.create(AFObject,AFUtility.createPropertiesObject(
+  [
+    ['afApplicationView', null],
+    ['displayStyle', 'block']
+  ])
+);
 
 AFLayout.setView = function(afViewObj)
 {
   this.afView = Object.create(afViewObj);
 };
 
-var AFListLayout = Object.create(AFLayout, {
-  listItemCount : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 1,
-    writable     : true
-  }
-});
+var AFListLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
+  [
+    ['listItemCount', 1]
+  ])
+);
 
 var AFUnorderedListLayout = Object.create(AFListLayout);
 
 var AFOrderedListLayout = Object.create(AFListLayout);
 
-var AFColumnLayout = Object.create(AFLayout, {
-  columnCount : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 1,
-    writable     : true
-  }
-});
+var AFColumnLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
+  [
+    ['columnCount', 1]
+  ])
+);
 AFColumnLayout.setColumns = function(columnsObj)
 {
   //console.log(columnsObj);
 };
 
-var AFGridLayout = Object.create(AFLayout, {
-  rowCount : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 1,
-    writable     : true
-  }
-});
+var AFGridLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
+  [
+    ['rowCount', 1]
+  ])
+);
 
 var AFLayoutItem = Object.create(AFLayout);
 
 var AFListLayoutItem = Object.create(AFLayoutItem);
 
-var AFColumnLayoutItem = Object.create(AFLayoutItem, {
-  columnItemWidthPercentage : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 100,
-    writable     : true
-  },
-  displayStyle : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'inline',
-    writable     : true
-  }
-});
+var AFColumnLayoutItem = Object.create(AFLayoutItem, AFUtility.createPropertiesObject(
+  [
+    ['columnItemWidthPercentage', 100],
+    ['displayStyle', 'inline']
+  ])
+);
 
-var AFGridLayoutItem = Object.create(AFLayoutItem, {
-  columnCount : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 1,
-    writable     : true
-  }
-});
+var AFGridLayoutItem = Object.create(AFLayoutItem, AFUtility.createPropertiesObject(
+  [
+    ['columnCount', 1]
+  ])
+);
 
-var AFForm = Object.create(AFObject, {
-  action : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  },
-  method : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'POST',
-    writable     : true
-  }
-});
+var AFForm = Object.create(AFObject, AFUtility.createPropertiesObject(
+  [
+    ['action', null],
+    ['method', 'post']
+  ])
+);
 
 var AFInputField = Object.create(AFObject);
 
-var AFTextInputField = Object.create(AFInputField, {
-  autofocus   : {
-    congifurable : true,
-    enumerable   : true,
-    value        : false,
-    writable     : true
-  },
-  placeholder : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  },
-  type        : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'text',
-    writable     : true
-  },
-  value       : {
-    congifurable : true,
-    enumerable   : true,
-    value        : null,
-    writable     : true
-  }
-});
+var AFTextInputField = Object.create(AFInputField, AFUtility.createPropertiesObject(
+  [
+    ['autofocus', false],
+    ['placeholder', null],
+    ['type', 'text'],
+    ['value', null]
+  ])
+);
 
-var AFPasswordInputField = Object.create(AFTextInputField, {
-  type        : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'password',
-    writable     : true
-  }
-});
+var AFPasswordInputField = Object.create(AFTextInputField, AFUtility.createPropertiesObject(
+  [
+    ['type', 'password']
+  ])
+);
 
-var AFEmailInputField= Object.create(AFTextInputField, {
-  type        : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 'email',
-    writable     : true
-  }
-});
-
-var AFUtility = Object.create(AFObject);
-
-
-AFUtility.createPropertiesObject = function(propertiesDataArray)
-{
-  var returnObject= {};
-
-  propertiesDataArray.forEach(function(element, index)
-  {
-    returnObject[element[0]] = {
-      value        : element[1] ? element[1] : undefined,
-      writable     : element[2] ? element[2] : true,
-      enumerable   : element[3] ? element[3] : true,
-      congifurable : element[4] ? element[4] : true,
-    };
-  });
-
-  return returnObject;
-};
+var AFEmailInputField= Object.create(AFTextInputField, AFUtility.createPropertiesObject(
+  [
+    ['type', 'email']
+  ])
+);
 
 var AFText = Object.create(AFObject, AFUtility.createPropertiesObject(
   [
@@ -346,14 +274,11 @@ var AFText = Object.create(AFObject, AFUtility.createPropertiesObject(
 ));
 console.log(AFText);
 
-var AFHeader = Object.create(AFText, {
-  type        : {
-    congifurable : true,
-    enumerable   : true,
-    value        : 1,
-    writable     : true
-  }
-});
+var AFHeader = Object.create(AFText, AFUtility.createPropertiesObject(
+  [
+    ['type', 1]
+  ])
+);
 
 var AFURL = Object.create(AFObject); 
 AFURL.createObjectURL = function(afBlob)

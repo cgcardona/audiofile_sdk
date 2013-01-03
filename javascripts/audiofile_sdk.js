@@ -1,5 +1,9 @@
 /*global $:false */
 /*global console:false */
+/*global window:false */
+/*global Worker:false */
+/*global Blob:false */
+/*global URL:false */
 'use strict';
 
 // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
@@ -132,7 +136,7 @@ AFApplication.createWebWorker = function()
   };
 };
 
-var AFWebWorker = Object.create(AFObject)
+var AFWebWorker = Object.create(AFObject);
 AFWebWorker.init = function(onAFApplicationStartFuncStr)
 {
   var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
@@ -164,7 +168,7 @@ var AFView = Object.create(AFObject,{
     enumerable   : true,
     value        : null,
     writable     : true
-  },
+  }
 });
 
 AFView.setLayout = function(afLayoutObj)
@@ -180,7 +184,7 @@ var AFLayout = Object.create(AFObject,{
     enumerable   : true,
     value        : null,
     writable     : true
-  },
+  }
 });
 
 AFLayout.setView = function(afViewObj)
@@ -188,29 +192,57 @@ AFLayout.setView = function(afViewObj)
   this.afView = Object.create(afViewObj);
 };
 
-var AFListLayout = Object.create(AFLayout);
+var AFListLayout = Object.create(AFLayout, {
+  listItemCount : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 1,
+    writable     : true
+  }
+});
 
 var AFUnorderedListLayout = Object.create(AFListLayout);
 
 var AFOrderedListLayout = Object.create(AFListLayout);
 
-var AFColumnLayout = Object.create(AFLayout);
-
-var AFGridLayout = Object.create(AFLayout);
-
-var AFLayoutItem = Object.create(AFLayout);
-
-var AFListLayoutItem = Object.create(AFLayoutItem);
-
-var AFColumnLayoutItem = Object.create(AFLayoutItem);
-
-var AFGridLayoutRowItem = Object.create(AFLayoutItem, {
+var AFColumnLayout = Object.create(AFLayout, {
   columnCount : {
     congifurable : true,
     enumerable   : true,
     value        : 1,
     writable     : true
-  },
+  }
+});
+
+var AFGridLayout = Object.create(AFLayout, {
+  rowCount : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 1,
+    writable     : true
+  }
+});
+
+var AFLayoutItem = Object.create(AFLayout);
+
+var AFListLayoutItem = Object.create(AFLayoutItem);
+
+var AFColumnLayoutItem = Object.create(AFLayoutItem, {
+  gridItemWidthPercentage : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 100,
+    writable     : true
+  }
+});
+
+var AFGridLayoutItem = Object.create(AFLayoutItem, {
+  columnCount : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 1,
+    writable     : true
+  }
 });
 
 var AFForm = Object.create(AFObject, {

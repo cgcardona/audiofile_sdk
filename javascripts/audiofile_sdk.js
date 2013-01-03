@@ -89,7 +89,6 @@ AFApplication.getApplicationManifest = function()
 
 AFApplication.getApplicationController = function()
 {
-//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
   var ctx = this;
   // need to get a pointer to the js that gets executed by $.getScript
   $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data, textStatus, jqxhr)
@@ -112,11 +111,7 @@ AFApplication.getApplicationDOM = function()
 
 AFApplication.startApplication = function()
 {
-  // ApplicationController also got created with the getScript above. Need to figure that out
-  // Filed as a ticket here: https://github.com/cgcardona/audiofile_sdk/issues/1
-
   this.applicationController.onAFApplicationStart();
-
 };
 
 AFApplication.stopApplication = function(){};
@@ -162,6 +157,61 @@ AFBlob.init = function(scriptArray)
 {
   this.afBlob = new Blob(scriptArray);
 };
+
+var AFView = Object.create(AFObject,{
+  afLayout : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
+  },
+});
+
+AFView.setLayout = function(afLayoutObj)
+{
+  this.afLayout = Object.create(afLayoutObj);
+};
+
+var AFApplicationView = Object.create(AFView);
+
+var AFLayout = Object.create(AFObject,{
+  afApplicationView : {
+    congifurable : true,
+    enumerable   : true,
+    value        : null,
+    writable     : true
+  },
+});
+
+AFLayout.setView = function(afViewObj)
+{
+  this.afView = Object.create(afViewObj);
+};
+
+var AFListLayout = Object.create(AFLayout);
+
+var AFUnorderedListLayout = Object.create(AFListLayout);
+
+var AFOrderedListLayout = Object.create(AFListLayout);
+
+var AFColumnLayout = Object.create(AFLayout);
+
+var AFGridLayout = Object.create(AFLayout);
+
+var AFLayoutItem = Object.create(AFLayout);
+
+var AFListLayoutItem = Object.create(AFLayoutItem);
+
+var AFColumnLayoutItem = Object.create(AFLayoutItem);
+
+var AFGridLayoutRowItem = Object.create(AFLayoutItem, {
+  columnCount : {
+    congifurable : true,
+    enumerable   : true,
+    value        : 1,
+    writable     : true
+  },
+});
 
 var AFForm = Object.create(AFObject, {
   action : {
@@ -240,6 +290,8 @@ AFCore.init = function()
 };
 
 // Below here is where i'm just stashing stuff and none of this should be getting used (in theory)
+//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+//console.log(AFApplicationManager.isPrototypeOf(afApplicationManager));
 var AFUI = (function()
 {
   function AFUI(context)

@@ -1,11 +1,14 @@
+/*jshint globalstrict: true*/
 /*global $:false */
 /*global console:false */
 /*global window:false */
+/*global document:false */
 /*global Worker:false */
+/*global CustomEvent:false */
 /*global Blob:false */
 /*global URL:false */
-'use strict';
 
+'use strict';
 // All Objects in the AudioFile Framework have AFObject as their final prototype before the JS Object
 var AFObject = {};
 AFObject.init = function(){};
@@ -78,10 +81,8 @@ var AFApplication = Object.create(AFObject);
 
 AFApplication.init = function(applicationControllerName)
 {
- 
   this.applicationControllerName = applicationControllerName;
   this.getApplicationManifest();
-
 };
 
 AFApplication.getApplicationManifest = function()
@@ -98,7 +99,6 @@ AFApplication.getApplicationManifest = function()
 AFApplication.getApplicationController = function()
 {
   var ctx = this;
-  // need to get a pointer to the js that gets executed by $.getScript
   $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data, textStatus, jqxhr)
   {
     ctx.applicationController = Object.create(window[ctx.applicationControllerName + 'Controller']);
@@ -119,6 +119,8 @@ AFApplication.getApplicationDOM = function()
 
 AFApplication.startApplication = function()
 {
+  AFLayoutEngine.injectDOMIntoIframe(this.applicationDOM, this.applicationControllerName);
+
   this.applicationController.onAFApplicationStart();
 };
 
@@ -130,8 +132,8 @@ AFApplication.unpauseApplication = function(){};
 
 AFApplication.createWebWorker = function()
 {
-  var onAFApplicationStartFuncStr = this.applicationController.onAFApplicationStart.toString();
-  var afWebWorker = new AFWebWorker(onAFApplicationStartFuncStr);
+  var afWebWorker = Object.create(AFWebWorker);
+  afWebWorker.init(this.applicationControllerName);
   afWebWorker.postMessage('Test');
 
   afWebWorker.webWorker.onmessage = function(event)
@@ -140,14 +142,27 @@ AFApplication.createWebWorker = function()
   };
 };
 
-var AFWebWorker = Object.create(AFObject);
-AFWebWorker.init = function(onAFApplicationStartFuncStr)
+var AFLayoutEngine = Object.create(AFObject);
+AFLayoutEngine.injectDOMIntoIframe = function(applicationDOM, applicationControllerName)
 {
-  var blob = new AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
-  var afURL = new AFURL();
+  var newIframe = document.createElement('iframe');
+  newIframe.src = 'about:blank'; 
+  newIframe.id  = applicationControllerName; 
+  document.body.appendChild(newIframe);
 
-  this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
-  //this.webWorker = new Worker('applications/' + applicationController + '/controllers/' + applicationController + 'Controller.js');
+  newIframe.contentWindow.document.open('text/html', 'replace');
+  newIframe.contentWindow.document.write(applicationDOM);
+  newIframe.contentWindow.document.close();
+};
+
+var AFWebWorker = Object.create(AFObject);
+AFWebWorker.init = function(applicationControllerName)
+{
+  //var blob = AFBlob(["self.onmessage=function(e){postMessage('Worker: '+e.data);}"]);
+  //var afURL = new AFURL();
+  //this.webWorker = new Worker(afURL.createObjectURL(blob.afBlob));
+  
+  this.webWorker = new Worker('applications/' + applicationControllerName + '/controllers/' + applicationControllerName + 'Controller.js');
 };
 
 AFWebWorker.postMessage = function(message)
@@ -157,7 +172,7 @@ AFWebWorker.postMessage = function(message)
 
 AFWebWorker.onMessage = function(message)
 {
-  //console.log('Response: ' + message);
+  console.log('Response: ' + message);
 };
 
 var AFBlob = Object.create(AFObject); 
@@ -294,8 +309,9 @@ AFURL.createObjectURL = function(afBlob)
 var AFCore = Object.create(AFObject);
 AFCore.init = function()
 {
+  console.log('asdf');
   var afCoreController = Object.create(AFCoreController);
-  afCoreController.onAFApplicationStart();
+  //afCoreController.onAFApplicationStart();
 };
 
 // Below here is where i'm just stashing stuff and none of this should be getting used (in theory)

@@ -309,9 +309,8 @@ AFURL.createObjectURL = function(afBlob)
 var AFCore = Object.create(AFObject);
 AFCore.init = function()
 {
-  console.log('asdf');
   var afCoreController = Object.create(AFCoreController);
-  //afCoreController.onAFApplicationStart();
+  afCoreController.onAFApplicationStart();
 };
 
 // Below here is where i'm just stashing stuff and none of this should be getting used (in theory)

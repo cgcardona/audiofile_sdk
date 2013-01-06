@@ -6,47 +6,53 @@
     <title>AudioFile Dashboard</title>
     <link rel="stylesheet" href="./stylesheets/reset.css" media="screen">
     <!--link rel="stylesheet" href="./stylesheets/styles.css" media="screen"-->
-    <style>
-      .afColumnLayout > div{
-        display:inline-block;
-      }
-
-      .afColumnLayout > #desc{
-        width:35%;
-      }
-
-      .afColumnLayout > #menu{
-        width:64%;
-      }
-    </style>
   </head>
   <body>
     <script src="./javascripts/jquery.js"></script>
     <script>
       window.onload = function()
       {
+        // start left column
+        // left column wrapper div
         var wrapperLeftColDiv       = document.createElement('div');
         wrapperLeftColDiv.id        = 'desc';
+        wrapperLeftColDiv.style.display = 'inline-block';
+        wrapperLeftColDiv.style.width = '35%';
 
+        // left column h1 
         var leftColHeader1       = document.createElement('h1');
         leftColHeader1.innerText = 'Welcome to Audiofile';
+        leftColHeader1.style.fontWeight = 200;
 
+        // left column h2 
         var leftColHeader2       = document.createElement('h2');
         leftColHeader2.innerText = 'What do you want to hear today?';
+        leftColHeader2.style.fontWeight = 200;
 
+        // build the left column 
         wrapperLeftColDiv.appendChild(leftColHeader1);
         wrapperLeftColDiv.appendChild(leftColHeader2);
+        // end the left column 
 
+        // start the right column 
         var wrapperRightColDiv       = document.createElement('div');
         wrapperRightColDiv.id        = 'menu';
         wrapperRightColDiv.innerText = 'This is the grid menu';
+        wrapperRightColDiv.style.display = 'inline-block';
+        wrapperRightColDiv.style.width = '64%';
+        // end the right column 
 
+        // the outside wrapper div
         var wrapperDiv       = document.createElement('div');
         wrapperDiv.id        = 'afDashboardColumnContainer';
         wrapperDiv.className = 'afColumnLayout';
-
+        wrapperDiv.style.fontFamily = 'helvetica';
+        wrapperDiv.style.fontWeight = 200;
+        // insert the left and right columns
         wrapperDiv.appendChild(wrapperLeftColDiv);
         wrapperDiv.appendChild(wrapperRightColDiv);
+
+        // insert into the body
         document.body.appendChild(wrapperDiv);
       };
     </script>

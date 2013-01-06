@@ -34,30 +34,19 @@
         var leftColHeader2       = document.createElement('h2');
         leftColHeader2.innerText = 'What do you want to hear today?';
 
-        var fragment1 = document.createDocumentFragment();
-        console.log(fragment1);
-        var leftColTxtElms = [leftColHeader1, leftColHeader2];
-
-        leftColTxtElms.forEach(function(el){
-          fragment1.appendChild(el);
-        });
-
-        wrapperLeftColDiv.appendChild(fragment1.cloneNode(true));
+        wrapperLeftColDiv.appendChild(leftColHeader1);
+        wrapperLeftColDiv.appendChild(leftColHeader2);
 
         var wrapperRightColDiv       = document.createElement('div');
         wrapperRightColDiv.id        = 'menu';
         wrapperRightColDiv.innerText = 'This is the grid menu';
 
-        var fragment = document.createDocumentFragment();
-        var wrapperElems = [wrapperLeftColDiv, wrapperRightColDiv];
-        wrapperElems.forEach(function(elm){
-          fragment.appendChild(elm);
-        });
-
         var wrapperDiv       = document.createElement('div');
         wrapperDiv.id        = 'afDashboardColumnContainer';
         wrapperDiv.className = 'afColumnLayout';
-        wrapperDiv.appendChild(fragment.cloneNode(true));
+
+        wrapperDiv.appendChild(wrapperLeftColDiv);
+        wrapperDiv.appendChild(wrapperRightColDiv);
         document.body.appendChild(wrapperDiv);
       };
     </script>

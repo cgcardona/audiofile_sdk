@@ -1,4 +1,4 @@
-/*jshint globalstrict: true*/
+/*jshint globalstrict:true*/
 /*global $:false */
 /*global console:false */
 /*global window:false */

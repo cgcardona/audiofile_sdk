@@ -5,13 +5,62 @@
     <meta name="description" content="">
     <title>AudioFile Dashboard</title>
     <link rel="stylesheet" href="./stylesheets/reset.css" media="screen">
-    <link rel="stylesheet" href="./stylesheets/styles.css" media="screen">
+    <!--link rel="stylesheet" href="./stylesheets/styles.css" media="screen"-->
+    <style>
+      .afColumnLayout > div{
+        display:inline-block;
+      }
+
+      .afColumnLayout > #desc{
+        width:35%;
+      }
+
+      .afColumnLayout > #menu{
+        width:64%;
+      }
+    </style>
   </head>
   <body>
-      <div id="container">
-        This is the Audiofile Dashboard!!!!
-      </div>
     <script src="./javascripts/jquery.js"></script>
-    <script src="./js/scripts.js"></script>
+    <script>
+      window.onload = function()
+      {
+        var wrapperLeftColDiv       = document.createElement('div');
+        wrapperLeftColDiv.id        = 'desc';
+
+        var leftColHeader1       = document.createElement('h1');
+        leftColHeader1.innerText = 'Welcome to Audiofile';
+
+        var leftColHeader2       = document.createElement('h2');
+        leftColHeader2.innerText = 'What do you want to hear today?';
+
+        var fragment1 = document.createDocumentFragment();
+        console.log(fragment1);
+        var leftColTxtElms = [leftColHeader1, leftColHeader2];
+
+        leftColTxtElms.forEach(function(el){
+          fragment1.appendChild(el);
+        });
+
+        wrapperLeftColDiv.appendChild(fragment1.cloneNode(true));
+
+        var wrapperRightColDiv       = document.createElement('div');
+        wrapperRightColDiv.id        = 'menu';
+        wrapperRightColDiv.innerText = 'This is the grid menu';
+
+        var fragment = document.createDocumentFragment();
+        var wrapperElems = [wrapperLeftColDiv, wrapperRightColDiv];
+        wrapperElems.forEach(function(elm){
+          fragment.appendChild(elm);
+        });
+
+        var wrapperDiv       = document.createElement('div');
+        wrapperDiv.id        = 'afDashboardColumnContainer';
+        wrapperDiv.className = 'afColumnLayout';
+        wrapperDiv.appendChild(fragment.cloneNode(true));
+        document.body.appendChild(wrapperDiv);
+      };
+    </script>
+    <!--script src="./javascripts/scripts.js"></script-->
   </body>
 </html>

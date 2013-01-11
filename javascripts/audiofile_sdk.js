@@ -461,22 +461,29 @@ var AFGeneticsLab = (function()
   {
     for(var itr = 0; itr < this.generationCount; itr++)
     {
-      var newGeneration = [];
       var tmpArray3 = [];
       for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
-        tmpArray3.push(this.mateDNA(generation));
+        tmpArray3.push(this.mateDNA(generation, itertr));
         
+      var generation = [];
       $(tmpArray3).each(function(inxx, ell){
         $(ell).each(function(innx, elmm){
-          newGeneration.push(elmm);
+          generation.push(elmm);
         });
       });
+
+    this.currentGenerationCount++;
     }
-   console.log(newGeneration);
+    return generation;
   };
 
-  AFGeneticsLab.prototype.mateDNA = function(generation)
+  AFGeneticsLab.prototype.mateDNA = function(generation, name)
   {
+    // here is where the two parent are chosen.
+    // how can we weight the selection ever greater in favor of higher fitness
+    // rated creatures?
+    // length of generation array - current creatures index in current
+    // generation array gives assigned probability
 
     var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
     var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
@@ -489,16 +496,18 @@ var AFGeneticsLab = (function()
     var parent2SliceA = parent2.dna.slice(0, dnaBreakPoint);
     var parent2SliceB = parent2.dna.slice(dnaBreakPoint);
 
+    // also need to add a mutateDNA() gene method
     var tmpDNAArray = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
     var tmpArray2 = [];
     var ctx = this;
     $(tmpDNAArray).each(function(inx, emt){
       tmpArray2.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
-          ['name','need to get a dynamic name'],
+    // need to figure out how to get the name here
+          ['name', name],
           ['dna', emt],
-          ['fitness', 'need to get this fitness score somewhere'],
-          ['generation', (ctx.generationCount + 1)],
+          ['fitness',  ctx.gradeDNA(emt).toString()],
+          ['generation', ctx.currentGenerationCount],
           ['parent1', parent1],
           ['parent2', parent2]
         ])
@@ -577,6 +586,7 @@ var AFUIGeneticsLab = (function()
     var generationOfCreatures = this.afGeneticsLab.generateCreatures();
     var sortedGenerationOfCreatures = generationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
     var evolvedDNA = this.afGeneticsLab.evolveDNA(sortedGenerationOfCreatures);
+    console.log(evolvedDNA);
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 

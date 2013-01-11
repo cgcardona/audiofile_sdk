@@ -497,6 +497,9 @@ var AFGeneticsLab = (function()
     var parent2SliceB = parent2.dna.slice(dnaBreakPoint);
 
     // also need to add a mutateDNA() gene method
+    var mutateDNA = generation[Math.floor((Math.random() * 20) + 0)];
+    console.log(mutateDNA);
+
     var tmpDNAArray = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
     var tmpArray2 = [];
     var ctx = this;
@@ -534,10 +537,10 @@ var AFUIGeneticsLab = (function()
     var setupFormHeader = $('<h1>Genetics Lab</h1>');
     $(setupFormContainer).append(setupFormHeader);
 
-    var generationSizeInput = $('<p>Generations Size: <input id="generationSize" placeholder="Generation Size"></p>');
+    var generationSizeInput = $('<p>Generations Size: <input type="range" min="1" max="100" step="1" id="generationSize"></p>');
     $(setupFormContainer).append(generationSizeInput);
 
-    var generationCountInput = $('<p>Generation Count: <input id="generationCount" placeholder="Generation Count"></p>');
+    var generationCountInput = $('<p>Generation Count: <input type="range" min="1" max="10" step="1" id="generationCount"></p>');
     $(setupFormContainer).append(generationCountInput);
 
     var dnaBitCount = $('<p>DNA Bit Count: <input id="dnaBitCount" placeholder="DNA Bit Count"></p>');

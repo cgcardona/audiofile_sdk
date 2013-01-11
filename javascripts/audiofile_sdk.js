@@ -388,11 +388,11 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.updateSettings = function(settings)
   {
-    this.generationSize     = settings.generationSize;
-    this.generationCount     = settings.generationCount;
-    this.dnaBitCount = settings.dnaBitCount;
-    this.dnaStepCount     = settings.dnaStepCount;
-    this.scaleSteps     = settings.scaleSteps;
+    this.generationSize  = settings.generationSize;
+    this.generationCount = settings.generationCount;
+    this.dnaBitCount     = settings.dnaBitCount;
+    this.dnaStepCount    = settings.dnaStepCount;
+    this.scaleSteps      = settings.scaleSteps;
   };
 
   AFGeneticsLab.prototype.generateCreatures = function()
@@ -404,11 +404,11 @@ var AFGeneticsLab = (function()
       for(var i = 0; i < this.dnaBitCount; i++)
         tmpString += Math.floor((Math.random() * this.dnaStepCount));
 
-      console.log(x + 1);
+      var rootSpan = $('<span id="rootSpan">' + tmpString + '</span>');
       generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
           ['name', (x + 1)],
-          ['dna', tmpString],
+          ['dna', rootSpan[0]],
           ['fitness', this.gradeDNA(tmpString).toString()],
           ['generation', this.currentGenerationCount],
           ['parent1', 'first generation'],
@@ -540,13 +540,13 @@ var AFUIGeneticsLab = (function()
     var generationCountInput = $('<p>Generation Count: <input type="range" min="1" max="10" step="1" id="generationCount"></p>');
     $(setupFormContainer).append(generationCountInput);
 
-    var dnaBitCount = $('<p>DNA Bit Count: <input id="dnaBitCount" placeholder="DNA Bit Count"></p>');
+    var dnaBitCount = $('<p>DNA Bit Count: <input value="8" id="dnaBitCount" placeholder="DNA Bit Count"></p>');
     $(setupFormContainer).append(dnaBitCount);
 
-    var potentialStepCount = $('<p>Potential Step Count: <input id="dnaStepCount" placeholder="Potential Step Count"></p>');
+    var potentialStepCount = $('<p>Potential Step Count: <input value="3" id="dnaStepCount" placeholder="Potential Step Count"></p>');
     $(setupFormContainer).append(potentialStepCount);
 
-    var desiredScale = $('<p>Desired Scale Steps: <input id="scaleSteps" placeholder="Desired Scale Steps"></p>');
+    var desiredScale = $('<p>Desired Scale Steps: <input value="1,3,5,6,8,10,11" id="scaleSteps" placeholder="Desired Scale Steps"></p>');
     $(setupFormContainer).append(desiredScale);
 
     var submitGAForm = $('<button id="gaSubmit">Generate DNA</button>');
@@ -584,17 +584,16 @@ var AFUIGeneticsLab = (function()
   {
     this.afGeneticsLab.updateSettings(settings);
     var evolvedGenerationOfCreatures = this.afGeneticsLab.evolveDNA(this.afGeneticsLab.generateCreatures());
-    console.log(evolvedGenerationOfCreatures);
     var sortedEvolvedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
     $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
-    //console.log(elmnt);
+    console.log(elmnt);
       var listItem = $('<li>');
 
       var domEls = [
         $('<p>Name: ' + elmnt.name + '</p>'), 
         $('<p>Generation: ' + elmnt.generation + '</p>'), 
-        $('<p>DNA: ' + elmnt.dna + '</p>'), 
+        $('<p>DNA: </p>').append(elmnt.dna), 
         $('<p>Fitness: ' + elmnt.fitness + '</p>'), 
         $('<p>Parent1: ' + elmnt.parent1 + '</p>'), 
         $('<p>Parent2: ' + elmnt.parent2 + '</p>')

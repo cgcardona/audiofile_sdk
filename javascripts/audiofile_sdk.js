@@ -402,19 +402,18 @@ var AFGeneticsLab = (function()
     var generation = [];
     for(var x = 0; x < this.generationSize; x++)
     {
-      var creature = {};
       var tmpString = '';
       for(var i = 0; i < this.dnaBitCount; i++)
         tmpString += Math.floor((Math.random() * this.dnaStepCount));
 
-      generation.push(Object.create(AFDNACreature,  AFUtility.createPropertiesObject(
+      generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
           ['name', (x + 1)],
           ['dna', tmpString],
           ['fitness', undefined],
           ['generation', this.currentGenerationCount],
-          ['parent1', undefined],
-          ['parent2', undefined]
+          ['parent1', 'first generation'],
+          ['parent2', 'first generation']
         ])
       ));
     }
@@ -505,18 +504,20 @@ var AFUIGeneticsLab = (function()
     //var gradedDNA = this.afGeneticsLab.gradeDNA(generationOfCreatures);
     $(generationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
-      var nameP = $('<p>Name: ' + elmnt.name + '</p>');
-      var generationP = $('<p>Generation: ' + elmnt.generation + '</p>');
-      var dnaP = $('<p>DNA: ' + elmnt.dna + '</p>');
-      var fitnessP = $('<p>Fitness: ' + elmnt.fitness + '</p>');
-      var parent1P = $('<p>Parent1: ' + elmnt.parent1 + '</p>');
-      var parent2P = $('<p>Parent2: ' + elmnt.parent2 + '</p>');
-      $(listItem).append(nameP);
-      $(listItem).append(generationP);
-      $(listItem).append(fitnessP);
-      $(listItem).append(parent1P);
-      $(listItem).append(parent2P);
-      $(listItem).append(dnaP);
+
+      var domEls = [
+        $('<p>Name: ' + elmnt.name + '</p>'), 
+        $('<p>Generation: ' + elmnt.generation + '</p>'), 
+        $('<p>DNA: ' + elmnt.dna + '</p>'), 
+        $('<p>Fitness: ' + elmnt.fitness + '</p>'), 
+        $('<p>Parent1: ' + elmnt.parent1 + '</p>'), 
+        $('<p>Parent2: ' + elmnt.parent2 + '</p>')
+      ];
+
+      $(domEls).each(function(idx, elt){
+        $(listItem).append(elt);
+      });
+
       $('#gaDNAList').append(listItem);
     });
   };

@@ -145,7 +145,6 @@ AFApplication.createWebWorker = function()
 var AFLayoutEngine = Object.create(AFObject);
 AFLayoutEngine.injectDOMIntoIframe = function(applicationDOM, applicationControllerName)
 {
- console.log('asdf');
   var iframeWrapperDiv = document.createElement('div');
   iframeWrapperDiv.id = 'iframeWrapperDiv';
   iframeWrapperDiv.style.height = '100%';
@@ -410,7 +409,7 @@ var AFGeneticsLab = (function()
         [
           ['name', (x + 1)],
           ['dna', tmpString],
-          ['fitness', undefined],
+          ['fitness', this.gradeDNA(tmpString)],
           ['generation', this.currentGenerationCount],
           ['parent1', 'first generation'],
           ['parent2', 'first generation']
@@ -421,16 +420,39 @@ var AFGeneticsLab = (function()
     return generation;
   };
 
-  AFGeneticsLab.prototype.gradeDNA = function(dnaArray)
+  AFGeneticsLab.prototype.gradeDNA = function(dnaStrand)
   {
-    $(dnaArray).each(function(indx, elmnt){
-      var soundState = true;
-      var tone = 0;
+    var soundState = true;
+    var toneState = 1;
+    var dnaBits = dnaStrand.split('');
+    var fitnessScore = 0;
 
-      for(var p = 0; p < elmnt.length; p++)
-      {
-      }
+    var ctx = this;
+    $(dnaBits).each(function(indx, elmnt){
+
+      if(elmnt == 0 && soundState == true)
+        soundState = false;
+      else if(elmnt == 0 && soundState == false)
+        soundState = true;
+
+      if(elmnt == 1)
+        toneState += 1;
+
+      if(elmnt == 2)
+        toneState -= 1;
+
+      if(soundState == false)
+        fitnessScore -= 5;
+
+      if(_.contains(ctx.scaleSteps, toneState))
+        fitnessScore += 10;
+      else
+        fitnessScore -= 10;
+      
+      return fitnessScore;
     });
+
+    return fitnessScore;
   };
 
   return AFGeneticsLab;
@@ -489,7 +511,7 @@ var AFUIGeneticsLab = (function()
         generationCount : parseInt($('#generationCount').val(), 10),
         dnaBitCount     : parseInt($('#dnaBitCount').val(), 10),
         dnaStepCount    : parseInt($('#dnaStepCount').val(), 10),
-        scaleSteps      : $('#scaleSteps').val(),
+        scaleSteps      : $('#scaleSteps').val().split(','),
         gaSubmit        : parseInt($('#gaSubmit').val(), 10)
       });
       return false;
@@ -501,7 +523,6 @@ var AFUIGeneticsLab = (function()
     this.afGeneticsLab.updateSettings(settings);
     var generationOfCreatures = this.afGeneticsLab.generateCreatures();
     console.log(generationOfCreatures);
-    //var gradedDNA = this.afGeneticsLab.gradeDNA(generationOfCreatures);
     $(generationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 

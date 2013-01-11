@@ -409,7 +409,7 @@ var AFGeneticsLab = (function()
         [
           ['name', (x + 1)],
           ['dna', tmpString],
-          ['fitness', this.gradeDNA(tmpString)],
+          ['fitness', this.gradeDNA(tmpString).toString()],
           ['generation', this.currentGenerationCount],
           ['parent1', 'first generation'],
           ['parent2', 'first generation']

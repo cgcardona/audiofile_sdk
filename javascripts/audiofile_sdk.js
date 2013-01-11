@@ -145,10 +145,16 @@ AFApplication.createWebWorker = function()
 var AFLayoutEngine = Object.create(AFObject);
 AFLayoutEngine.injectDOMIntoIframe = function(applicationDOM, applicationControllerName)
 {
+ console.log('asdf');
+  var iframeWrapperDiv = document.createElement('div');
+  iframeWrapperDiv.id = 'iframeWrapperDiv';
+  iframeWrapperDiv.style.height = '100%';
+  iframeWrapperDiv.style.overflow = 'scroll';
   var newIframe = document.createElement('iframe');
+  iframeWrapperDiv.appendChild(newIframe);
   newIframe.src = 'about:blank'; 
   newIframe.id  = applicationControllerName; 
-  document.body.appendChild(newIframe);
+  document.body.appendChild(iframeWrapperDiv);
 
   newIframe.contentWindow.document.open('text/html', 'replace');
   newIframe.contentWindow.document.write(applicationDOM);
@@ -299,6 +305,17 @@ var AFHeader = Object.create(AFText, AFUtility.createPropertiesObject(
   ])
 );
 
+var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
+  [
+    ['name', undefined],
+    ['dna', undefined],
+    ['fitness', undefined],
+    ['generation', undefined],
+    ['parent1', undefined],
+    ['parent2', undefined]
+  ])
+);
+
 var AFURL = Object.create(AFObject); 
 AFURL.createObjectURL = function(afBlob)
 {
@@ -368,30 +385,41 @@ var AFGeneticsLab = (function()
 {
   function AFGeneticsLab()
   {
+    this.currentGenerationCount = 1;
   }
 
   AFGeneticsLab.prototype.updateSettings = function(settings)
   {
-    this.gaGSInput     = settings.gaGSInput;
-    this.gaGCInput     = settings.gaGCInput;
-    this.gaDNABitCount = settings.gaDNABitCount;
-    this.gaPSCount     = settings.gaPSCount;
-    this.gaDSSteps     = settings.gaDSSteps;
+    this.generationSize     = settings.generationSize;
+    this.generationCount     = settings.generationCount;
+    this.dnaBitCount = settings.dnaBitCount;
+    this.dnaStepCount     = settings.dnaStepCount;
+    this.scaleSteps     = settings.scaleSteps;
   };
 
-  AFGeneticsLab.prototype.generateDNA = function()
+  AFGeneticsLab.prototype.generateCreatures = function()
   {
-    var dnaArray = [];
-    for(var x = 0; x < this.gaGSInput; x++)
+    var generation = [];
+    for(var x = 0; x < this.generationSize; x++)
     {
+      var creature = {};
       var tmpString = '';
-      for(var i = 0; i < this.gaDNABitCount; i++)
-        tmpString += Math.floor((Math.random() * this.gaPSCount));
+      for(var i = 0; i < this.dnaBitCount; i++)
+        tmpString += Math.floor((Math.random() * this.dnaStepCount));
 
-      dnaArray.push(tmpString);
+      generation.push(Object.create(AFDNACreature,  AFUtility.createPropertiesObject(
+        [
+          ['name', (x + 1)],
+          ['dna', tmpString],
+          ['fitness', undefined],
+          ['generation', this.currentGenerationCount],
+          ['parent1', undefined],
+          ['parent2', undefined]
+        ])
+      ));
     }
 
-    return dnaArray;
+    return generation;
   };
 
   AFGeneticsLab.prototype.gradeDNA = function(dnaArray)
@@ -411,9 +439,8 @@ var AFGeneticsLab = (function()
 
 var AFUIGeneticsLab = (function()
 {
-  function AFUIGeneticsLab(context)
-  {
-    this.ctx = context;
+  function AFUIGeneticsLab(){
+    this.afGeneticsLab = new AFGeneticsLab();
   }
 
   AFUIGeneticsLab.prototype.buildDom = function()
@@ -424,19 +451,19 @@ var AFUIGeneticsLab = (function()
     var setupFormHeader = $('<h1>Genetics Lab</h1>');
     $(setupFormContainer).append(setupFormHeader);
 
-    var generationSizeInput = $('<p>Generations Size: <input id="gaGSInput" placeholder="Generation Size"></p>');
+    var generationSizeInput = $('<p>Generations Size: <input id="generationSize" placeholder="Generation Size"></p>');
     $(setupFormContainer).append(generationSizeInput);
 
-    var generationCountInput = $('<p>Generation Count: <input id="gaGCInput" placeholder="Generation Count"></p>');
+    var generationCountInput = $('<p>Generation Count: <input id="generationCount" placeholder="Generation Count"></p>');
     $(setupFormContainer).append(generationCountInput);
 
-    var dnaBitCount = $('<p>DNA Bit Count: <input id="gaDNABitCount" placeholder="DNA Bit Count"></p>');
+    var dnaBitCount = $('<p>DNA Bit Count: <input id="dnaBitCount" placeholder="DNA Bit Count"></p>');
     $(setupFormContainer).append(dnaBitCount);
 
-    var potentialStepCount = $('<p>Potential Step Count: <input id="gaPSCount" placeholder="Potential Step Count"></p>');
+    var potentialStepCount = $('<p>Potential Step Count: <input id="dnaStepCount" placeholder="Potential Step Count"></p>');
     $(setupFormContainer).append(potentialStepCount);
 
-    var desiredScale = $('<p>Desired Scale Steps: <input id="gaDSSteps" placeholder="Desired Scale Steps"></p>');
+    var desiredScale = $('<p>Desired Scale Steps: <input id="scaleSteps" placeholder="Desired Scale Steps"></p>');
     $(setupFormContainer).append(desiredScale);
 
     var submitGAForm = $('<button id="gaSubmit">Generate DNA</button>');
@@ -445,12 +472,12 @@ var AFUIGeneticsLab = (function()
     $(container).append(setupFormContainer);
 
     var dnaOutputContainer = $('<div></div>');
-    var dnaList = $('<ol id="gaDNAList"></ol>');
+    var dnaList = document.createElement('ol');
+    dnaList.id = 'gaDNAList';
 
     $(dnaOutputContainer).append(dnaList);
     $(container).append(dnaOutputContainer);
 
-    $('#foobar').append(container);
     return container;
   };
 
@@ -458,25 +485,38 @@ var AFUIGeneticsLab = (function()
   {
     var that = this;
     $('#gaSubmit').click(function(evnt) {
-      that.generateDNA({
-        gaGSInput     : parseInt($('#gaGSInput').val(), 10),
-        gaGCInput     : parseInt($('#gaGCInput').val(), 10),
-        gaDNABitCount : parseInt($('#gaDNABitCount').val(), 10),
-        gaPSCount     : parseInt($('#gaPSCount').val(), 10),
-        gaDSSteps     : $('#gaDSSteps').val(),
-        gaSubmit      : parseInt($('#gaSubmit').val(), 10)
+      that.generateCreatures({
+        generationSize  : parseInt($('#generationSize').val(), 10),
+        generationCount : parseInt($('#generationCount').val(), 10),
+        dnaBitCount     : parseInt($('#dnaBitCount').val(), 10),
+        dnaStepCount    : parseInt($('#dnaStepCount').val(), 10),
+        scaleSteps      : $('#scaleSteps').val(),
+        gaSubmit        : parseInt($('#gaSubmit').val(), 10)
       });
       return false;
     });
   };
 
-  AFUIGeneticsLab.prototype.generateDNA = function(settings)
+  AFUIGeneticsLab.prototype.generateCreatures = function(settings)
   {
-    this.ctx.AFGeneticsLab.updateSettings(settings);
-    var dnaArray = this.ctx.AFGeneticsLab.generateDNA();
-    var gradedDNA = this.ctx.AFGeneticsLab.gradeDNA(dnaArray);
-    $(dnaArray).each(function(indx, elmnt){
-      var listItem = $('<li>' + elmnt + '</li>');
+    this.afGeneticsLab.updateSettings(settings);
+    var generationOfCreatures = this.afGeneticsLab.generateCreatures();
+    console.log(generationOfCreatures);
+    //var gradedDNA = this.afGeneticsLab.gradeDNA(generationOfCreatures);
+    $(generationOfCreatures).each(function(indx, elmnt){
+      var listItem = $('<li>');
+      var nameP = $('<p>Name: ' + elmnt.name + '</p>');
+      var generationP = $('<p>Generation: ' + elmnt.generation + '</p>');
+      var dnaP = $('<p>DNA: ' + elmnt.dna + '</p>');
+      var fitnessP = $('<p>Fitness: ' + elmnt.fitness + '</p>');
+      var parent1P = $('<p>Parent1: ' + elmnt.parent1 + '</p>');
+      var parent2P = $('<p>Parent2: ' + elmnt.parent2 + '</p>');
+      $(listItem).append(nameP);
+      $(listItem).append(generationP);
+      $(listItem).append(fitnessP);
+      $(listItem).append(parent1P);
+      $(listItem).append(parent2P);
+      $(listItem).append(dnaP);
       $('#gaDNAList').append(listItem);
     });
   };

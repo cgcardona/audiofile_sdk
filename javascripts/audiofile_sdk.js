@@ -459,25 +459,53 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.evolveDNA = function(generation)
   {
-    var newGeneration = [];
     for(var itr = 0; itr < this.generationCount; itr++)
     {
-      for(var itertr = 0; itertr < this.generationSize; itertr++)
-      {
-        newGeneration.push(this.mateDNA(generation));
-      }
-    //  console.log(newGeneration);
+      var newGeneration = [];
+      var tmpArray3 = [];
+      for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
+        tmpArray3.push(this.mateDNA(generation));
+        
+      $(tmpArray3).each(function(inxx, ell){
+        $(ell).each(function(innx, elmm){
+          newGeneration.push(elmm);
+        });
+      });
     }
-   // console.log(generation);
+   console.log(newGeneration);
   };
 
   AFGeneticsLab.prototype.mateDNA = function(generation)
   {
-    $(generation).each(function(indx, elmnt){
-     // console.log(elmnt);
+
+    var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+    var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+
+    var dnaBreakPoint = Math.floor((Math.random() * this.dnaBitCount) + 0);
+    
+    var parent1SliceA = parent1.dna.slice(0, dnaBreakPoint);
+    var parent1SliceB = parent1.dna.slice(dnaBreakPoint);
+    
+    var parent2SliceA = parent2.dna.slice(0, dnaBreakPoint);
+    var parent2SliceB = parent2.dna.slice(dnaBreakPoint);
+
+    var tmpDNAArray = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
+    var tmpArray2 = [];
+    var ctx = this;
+    $(tmpDNAArray).each(function(inx, emt){
+      tmpArray2.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
+        [
+          ['name','need to get a dynamic name'],
+          ['dna', emt],
+          ['fitness', 'need to get this fitness score somewhere'],
+          ['generation', (ctx.generationCount + 1)],
+          ['parent1', parent1],
+          ['parent2', parent2]
+        ])
+      ));
     });
 
-    return '507';
+    return tmpArray2;
   };
 
   return AFGeneticsLab;
@@ -548,7 +576,7 @@ var AFUIGeneticsLab = (function()
     this.afGeneticsLab.updateSettings(settings);
     var generationOfCreatures = this.afGeneticsLab.generateCreatures();
     var sortedGenerationOfCreatures = generationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
-    this.afGeneticsLab.evolveDNA(sortedGenerationOfCreatures);
+    var evolvedDNA = this.afGeneticsLab.evolveDNA(sortedGenerationOfCreatures);
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 

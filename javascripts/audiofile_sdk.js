@@ -233,7 +233,6 @@ var AFColumnLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
 );
 AFColumnLayout.setColumns = function(columnsObj)
 {
-  //console.log(columnsObj);
 };
 
 var AFGridLayout = Object.create(AFLayout, AFUtility.createPropertiesObject(
@@ -405,6 +404,7 @@ var AFGeneticsLab = (function()
       for(var i = 0; i < this.dnaBitCount; i++)
         tmpString += Math.floor((Math.random() * this.dnaStepCount));
 
+      console.log(x + 1);
       generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
           ['name', (x + 1)],
@@ -459,20 +459,20 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.evolveDNA = function(generation)
   {
-    for(var itr = 0; itr < this.generationCount; itr++)
+    for(var itr = 0; itr < this.generationCount - 1; itr++)
     {
-      var tmpArray3 = [];
+      var mateDNAArray = [];
+      this.currentGenerationCount++;
+
       for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
-        tmpArray3.push(this.mateDNA(generation, itertr));
+        mateDNAArray.push(this.mateDNA(generation, itertr));
         
       var generation = [];
-      $(tmpArray3).each(function(inxx, ell){
+      $(mateDNAArray).each(function(inxx, ell){
         $(ell).each(function(innx, elmm){
           generation.push(elmm);
         });
       });
-
-    this.currentGenerationCount++;
     }
     return generation;
   };
@@ -498,18 +498,15 @@ var AFGeneticsLab = (function()
 
     // also need to add a mutateDNA() gene method
     var mutateDNA = generation[Math.floor((Math.random() * 20) + 0)];
-    console.log(mutateDNA);
-
-    var tmpDNAArray = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
-    var tmpArray2 = [];
+    var concatDNAStrands = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
+    var createNewCreaturesArray = [];
     var ctx = this;
-    $(tmpDNAArray).each(function(inx, emt){
-      tmpArray2.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
+    $(concatDNAStrands).each(function(indx, elment){
+      createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
-    // need to figure out how to get the name here
-          ['name', name],
-          ['dna', emt],
-          ['fitness',  ctx.gradeDNA(emt).toString()],
+          ['name', 'need to figure out how to get the name here'],
+          ['dna', elment],
+          ['fitness',  ctx.gradeDNA(elment)],
           ['generation', ctx.currentGenerationCount],
           ['parent1', parent1],
           ['parent2', parent2]
@@ -517,7 +514,7 @@ var AFGeneticsLab = (function()
       ));
     });
 
-    return tmpArray2;
+    return createNewCreaturesArray;
   };
 
   return AFGeneticsLab;
@@ -586,11 +583,12 @@ var AFUIGeneticsLab = (function()
   AFUIGeneticsLab.prototype.generateCreatures = function(settings)
   {
     this.afGeneticsLab.updateSettings(settings);
-    var generationOfCreatures = this.afGeneticsLab.generateCreatures();
-    var sortedGenerationOfCreatures = generationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
-    var evolvedDNA = this.afGeneticsLab.evolveDNA(sortedGenerationOfCreatures);
-    console.log(evolvedDNA);
-    $(sortedGenerationOfCreatures).each(function(indx, elmnt){
+    var evolvedGenerationOfCreatures = this.afGeneticsLab.evolveDNA(this.afGeneticsLab.generateCreatures());
+    console.log(evolvedGenerationOfCreatures);
+    var sortedEvolvedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+
+    $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
+    //console.log(elmnt);
       var listItem = $('<li>');
 
       var domEls = [

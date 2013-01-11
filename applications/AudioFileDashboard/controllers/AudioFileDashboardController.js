@@ -6,7 +6,7 @@ var AudioFileDashboardController = Object.create(AFController);
 
 AudioFileDashboardController.onAFApplicationStart = function()
 {
-  console.log('AudioFile Dashboard App!');
+//  console.log('AudioFile Dashboard App!');
   //// create view and column layout 
   //var afDashBoardApplicationView = Object.create(AFApplicationView);
   //afDashBoardApplicationView.setLayout(Object.create(AFColumnLayout));

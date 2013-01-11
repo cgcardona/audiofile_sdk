@@ -422,7 +422,6 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.gradeDNA = function(dnaStrand)
   {
-  //console.log(dnaStrand);
     var soundState = true;
     var toneState = 1;
     var dnaBits = dnaStrand.split('');
@@ -489,7 +488,7 @@ var AFGeneticsLab = (function()
     var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
     var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
 
-    var dnaBreakPoint = Math.floor((Math.random() * this.dnaBitCount) + 0);
+    var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
     
     var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
     var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
@@ -497,14 +496,21 @@ var AFGeneticsLab = (function()
     var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
     var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
 
-    var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+    var mutateDNA = Math.floor((Math.random() * 20) + 0);
+    if(mutateDNA == 15)
+    {
+      parent1SliceA = this.mutateDNA(parent1SliceA);
+      var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
+      $(tmpSpanEL1A).append(parent1SliceA);
+    }
+    else
+      var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+
     var tmpSpanEL1B = $('<span class="parent1DNA">' + parent1SliceB + '</span>');
 
     var tmpSpanEL2A = $('<span class="parent2DNA">' + parent2SliceA + '</span>');
     var tmpSpanEL2B = $('<span class="parent2DNA">' + parent2SliceB + '</span>');
 
-    // also need to add a mutateDNA() gene method
-    var mutateDNA = generation[Math.floor((Math.random() * 20) + 0)];
     var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
 
     var createNewCreaturesArray = [];
@@ -524,6 +530,19 @@ var AFGeneticsLab = (function()
     });
 
     return createNewCreaturesArray;
+  };
+
+  AFGeneticsLab.prototype.mutateDNA = function(dnaStrand)
+  {
+    var counter = Math.floor((Math.random() * (dnaStrand.length - 1)) + 1);
+    var parentSliceA = dnaStrand.slice(0, counter);
+    var parentSliceB = dnaStrand.slice(counter);
+    var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
+    var mutatedGene = Math.floor((Math.random() * (this.dnaStepCount)) + 0);
+    var spanElmnt1 = $('<span></span>');
+    var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
+    $(spanElmnt1).append(childSliceA);
+    return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
   };
 
   return AFGeneticsLab;
@@ -546,7 +565,7 @@ var AFUIGeneticsLab = (function()
     var generationSizeInput = $('<p>Generations Size: <input type="range" min="1" max="100" step="1" id="generationSize"></p>');
     $(setupFormContainer).append(generationSizeInput);
 
-    var generationCountInput = $('<p>Generation Count: <input type="range" min="1" max="10" step="1" id="generationCount"></p>');
+    var generationCountInput = $('<p>Generation Count: <input value="2" type="range" min="1" max="10" step="1" id="generationCount"></p>');
     $(setupFormContainer).append(generationCountInput);
 
     var dnaBitCount = $('<p>DNA Bit Count: <input value="8" id="dnaBitCount" placeholder="DNA Bit Count"></p>');
@@ -596,7 +615,6 @@ var AFUIGeneticsLab = (function()
     var sortedEvolvedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
     $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
-    //console.log(elmnt);
       var listItem = $('<li>');
 
       var domEls = [

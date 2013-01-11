@@ -422,6 +422,7 @@ var AFGeneticsLab = (function()
 
   AFGeneticsLab.prototype.gradeDNA = function(dnaStrand)
   {
+  //console.log(dnaStrand);
     var soundState = true;
     var toneState = 1;
     var dnaBits = dnaStrand.split('');
@@ -490,23 +491,31 @@ var AFGeneticsLab = (function()
 
     var dnaBreakPoint = Math.floor((Math.random() * this.dnaBitCount) + 0);
     
-    var parent1SliceA = parent1.dna.slice(0, dnaBreakPoint);
-    var parent1SliceB = parent1.dna.slice(dnaBreakPoint);
+    var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
+    var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
     
-    var parent2SliceA = parent2.dna.slice(0, dnaBreakPoint);
-    var parent2SliceB = parent2.dna.slice(dnaBreakPoint);
+    var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
+    var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
+
+    var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+    var tmpSpanEL1B = $('<span class="parent1DNA">' + parent1SliceB + '</span>');
+
+    var tmpSpanEL2A = $('<span class="parent2DNA">' + parent2SliceA + '</span>');
+    var tmpSpanEL2B = $('<span class="parent2DNA">' + parent2SliceB + '</span>');
 
     // also need to add a mutateDNA() gene method
     var mutateDNA = generation[Math.floor((Math.random() * 20) + 0)];
-    var concatDNAStrands = [parent1SliceA + parent2SliceB, parent2SliceA + parent1SliceB];
+    var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
+
     var createNewCreaturesArray = [];
     var ctx = this;
+
     $(concatDNAStrands).each(function(indx, elment){
       createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
         [
           ['name', 'need to figure out how to get the name here'],
-          ['dna', elment],
-          ['fitness',  ctx.gradeDNA(elment)],
+          ['dna', elment[1]],
+          ['fitness',  ctx.gradeDNA(elment[0])],
           ['generation', ctx.currentGenerationCount],
           ['parent1', parent1],
           ['parent2', parent2]
@@ -587,7 +596,7 @@ var AFUIGeneticsLab = (function()
     var sortedEvolvedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
     $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
-    console.log(elmnt);
+    //console.log(elmnt);
       var listItem = $('<li>');
 
       var domEls = [

@@ -522,8 +522,8 @@ var AFUIGeneticsLab = (function()
   {
     this.afGeneticsLab.updateSettings(settings);
     var generationOfCreatures = this.afGeneticsLab.generateCreatures();
-    console.log(generationOfCreatures);
-    $(generationOfCreatures).each(function(indx, elmnt){
+    var sortedGenerationOfCreatures = _.sortBy(generationOfCreatures, 'fitness').reverse();
+    $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 
       var domEls = [

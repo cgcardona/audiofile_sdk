@@ -457,6 +457,29 @@ var AFGeneticsLab = (function()
     return fitnessScore;
   };
 
+  AFGeneticsLab.prototype.evolveDNA = function(generation)
+  {
+    var newGeneration = [];
+    for(var itr = 0; itr < this.generationCount; itr++)
+    {
+      for(var itertr = 0; itertr < this.generationSize; itertr++)
+      {
+        newGeneration.push(this.mateDNA(generation));
+      }
+    //  console.log(newGeneration);
+    }
+   // console.log(generation);
+  };
+
+  AFGeneticsLab.prototype.mateDNA = function(generation)
+  {
+    $(generation).each(function(indx, elmnt){
+     // console.log(elmnt);
+    });
+
+    return '507';
+  };
+
   return AFGeneticsLab;
 })();
 
@@ -524,7 +547,8 @@ var AFUIGeneticsLab = (function()
   {
     this.afGeneticsLab.updateSettings(settings);
     var generationOfCreatures = this.afGeneticsLab.generateCreatures();
-    var sortedGenerationOfCreatures = _.sortBy(generationOfCreatures, 'fitness').reverse();
+    var sortedGenerationOfCreatures = generationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+    this.afGeneticsLab.evolveDNA(sortedGenerationOfCreatures);
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 

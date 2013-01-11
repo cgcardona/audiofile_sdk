@@ -429,7 +429,6 @@ var AFGeneticsLab = (function()
 
     var ctx = this;
     $(dnaBits).each(function(indx, elmnt){
-
       if(elmnt == 0 && soundState == true)
         soundState = false;
       else if(elmnt == 0 && soundState == false)
@@ -441,15 +440,18 @@ var AFGeneticsLab = (function()
       if(elmnt == 2)
         toneState -= 1;
 
+      if(toneState == 0)
+        toneState = 12;
+      else if(toneState == 13)
+        toneState = 1;
+
       if(soundState == false)
         fitnessScore -= 5;
 
-      if(_.contains(ctx.scaleSteps, toneState))
+      if(_.contains(ctx.scaleSteps, toneState.toString()))
         fitnessScore += 10;
       else
         fitnessScore -= 10;
-      
-      return fitnessScore;
     });
 
     return fitnessScore;

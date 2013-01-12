@@ -49,7 +49,7 @@ AFCoreController.onAFApplicationStart = function()
 {
   var afApplicationManager = Object.create(AFApplicationManager);
   afApplicationManager.startAFApplication({
-    "controller" : "AudioFileDashboard"
+    "controller" : "AudioFileGeneticsLab"
   });
 };
 
@@ -497,11 +497,10 @@ var AFGeneticsLab = (function()
     var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
 
     var mutateDNA = Math.floor((Math.random() * 20) + 0);
-    if(mutateDNA == 15)
+    if(mutateDNA < 15)
     {
-      parent1SliceA = this.mutateDNA(parent1SliceA);
       var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
-      $(tmpSpanEL1A).append(parent1SliceA);
+      $(tmpSpanEL1A).append(this.mutateDNA(parent1SliceA));
     }
     else
       var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');

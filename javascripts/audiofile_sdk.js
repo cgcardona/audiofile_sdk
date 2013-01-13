@@ -546,57 +546,6 @@ var AFGeneticsLab = (function()
   return AFGeneticsLab;
 })();
 
-var AFUIGeneticsLab = (function()
-{
-  function AFUIGeneticsLab(){
-    this.afGeneticsLab = new AFGeneticsLab();
-  }
-
-  AFUIGeneticsLab.prototype.attachEventListeners = function()
-  {
-    var that = this;
-    $('#gaSubmit').click(function(evnt) {
-      that.generateCreatures({
-        generationSize  : parseInt($('#generationSize').val(), 10),
-        generationCount : parseInt($('#generationCount').val(), 10),
-        dnaBitCount     : parseInt($('#dnaBitCount').val(), 10),
-        dnaStepCount    : parseInt($('#dnaStepCount').val(), 10),
-        scaleSteps      : $('#scaleSteps').val().split(','),
-        gaSubmit        : parseInt($('#gaSubmit').val(), 10)
-      });
-      return false;
-    });
-  };
-
-  AFUIGeneticsLab.prototype.generateCreatures = function(settings)
-  {
-    this.afGeneticsLab.updateSettings(settings);
-    var evolvedGenerationOfCreatures = this.afGeneticsLab.evolveDNA(this.afGeneticsLab.generateCreatures());
-    var sortedEvolvedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
-
-    $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
-      var listItem = $('<li>');
-
-      var domEls = [
-        $('<p>Name: ' + elmnt.name + '</p>'), 
-        $('<p>Generation: ' + elmnt.generation + '</p>'), 
-        $('<p>DNA: </p>').append(elmnt.dna), 
-        $('<p>Fitness: ' + elmnt.fitness + '</p>'), 
-        $('<p>Parent1: ' + elmnt.parent1 + '</p>'), 
-        $('<p>Parent2: ' + elmnt.parent2 + '</p>')
-      ];
-
-      $(domEls).each(function(idx, elt){
-        $(listItem).append(elt);
-      });
-
-      $('#gaDNAList').append(listItem);
-    });
-  };
-
-  return AFUIGeneticsLab;
-})();
-
 var AFParser = (function()
 {
   function AFParser()

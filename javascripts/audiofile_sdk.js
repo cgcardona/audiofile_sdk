@@ -343,11 +343,10 @@ AFGeneticsLab.generateCreatures = function()
     for(var i = 0; i < this.dnaBitCount; i++)
       dnaString += Math.floor((Math.random() * this.dnaStepCount));
 
-    var rootSpan = $('<span id="rootSpan">' + dnaString + '</span>');
     generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
         ['name', (x + 1)],
-        ['dna', rootSpan[0]],
+        ['dna', dnaString],
         ['fitness', this.gradeDNA(dnaString).toString()],
         ['generation', this.currentGenerationCount],
         ['parent1', 'first generation'],
@@ -360,6 +359,8 @@ AFGeneticsLab.generateCreatures = function()
 
 AFGeneticsLab.gradeDNA = function(dnaStrand)
 {
+  // right now gradeDNA is hardcoded around the notion of a 3 state dna bit.
+  // This needs to be far more generic to handle a far wider range of use cases.
   var soundState = true;
   var toneState = 1;
   var dnaBits = dnaStrand.split('');
@@ -428,11 +429,28 @@ AFGeneticsLab.mateDNA = function(generation, name)
 
   var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
   
-  var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
-  var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
+  if(parent1.dna.innerText != undefined)
+  {
+    var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
+    var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
+  }
+  else
+  {
+    var parent1SliceA = parent1.dna.slice(0, dnaBreakPoint);
+    var parent1SliceB = parent1.dna.slice(dnaBreakPoint);
+  }
+
+  if(parent2.dna.innerText != undefined)
+  {
+    var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
+    var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
+  }
+  else
+  {
+    var parent2SliceA = parent2.dna.slice(0, dnaBreakPoint);
+    var parent2SliceB = parent2.dna.slice(dnaBreakPoint);
+  }
   
-  var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
-  var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
 
   var mutateDNA = Math.floor((Math.random() * 20) + 0);
   if(mutateDNA < 15)

@@ -1,3 +1,7 @@
+/*jshint globalstrict:true*/
+/*global $:false */
+/*global _:false */
+/*global AFGeneticsLab:false */
 window.onload = function()
 {
   'use strict';
@@ -12,13 +16,20 @@ window.onload = function()
       scaleSteps      : $('#scaleSteps').val().split(',')
     });
 
-    // create a generation of creatures and evolve/sort them
+    // create a generation of creatures
     var generationOfCreatures = afGeneticsLab.generateCreatures();
 
-    // Evolve them and sort by fitness score
-    var sortedEvolvedGenerationOfCreatures = afGeneticsLab.evolveDNA(generationOfCreatures).sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+    // Because it's the first generation wrap their dna property in a span with a class
+    _.each(generationOfCreatures, function(value, key){
+      var rootSpan = $('<span class="rootSpan">' + value.dna + '</span>');
+      value.dna = rootSpan;
+    }, this);
 
-    $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){
+    // Evolve them and sort by fitness score
+    var evolvedGenerationOfCreatures = afGeneticsLab.evolveDNA(generationOfCreatures);
+    var sortedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+
+    $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 
       var domEls = [

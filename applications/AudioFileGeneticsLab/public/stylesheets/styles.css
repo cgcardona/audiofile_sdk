@@ -14,7 +14,7 @@ form{
 #gaDNAList li:last-child{
   border-color: red;
 }
-#rootSpan{
+.rootSpan{
   color:#f0f;
 }
 .parent1DNA{

@@ -304,6 +304,12 @@ var AFHeader = Object.create(AFText, AFUtility.createPropertiesObject(
   ])
 );
 
+var AFURL = Object.create(AFObject); 
+AFURL.createObjectURL = function(afBlob)
+{
+  return URL.createObjectURL(afBlob);
+};
+
 var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
   [
     ['name', undefined],
@@ -315,20 +321,15 @@ var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
   ])
 );
 
-var AFURL = Object.create(AFObject); 
-AFURL.createObjectURL = function(afBlob)
-{
-  return URL.createObjectURL(afBlob);
-};
-
 var AFGeneticsLab = Object.create(AFObject, AFUtility.createPropertiesObject(
     [
       ['currentGenerationCount', 1]
     ])
 ); 
-AFGeneticsLab.updateSettings = function(settings)
+
+AFGeneticsLab.setProperties = function(properties)
 {
-  _.each(settings, function(value, key, list){
+  _.each(properties, function(value, key){
     this[key] = value;
   }, this);
 };
@@ -338,16 +339,16 @@ AFGeneticsLab.generateCreatures = function()
   var generation = [];
   for(var x = 0; x < this.generationSize; x++)
   {
-    var tmpString = '';
+    var dnaString = '';
     for(var i = 0; i < this.dnaBitCount; i++)
-      tmpString += Math.floor((Math.random() * this.dnaStepCount));
+      dnaString += Math.floor((Math.random() * this.dnaStepCount));
 
-    var rootSpan = $('<span id="rootSpan">' + tmpString + '</span>');
+    var rootSpan = $('<span id="rootSpan">' + dnaString + '</span>');
     generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
         ['name', (x + 1)],
         ['dna', rootSpan[0]],
-        ['fitness', this.gradeDNA(tmpString).toString()],
+        ['fitness', this.gradeDNA(dnaString).toString()],
         ['generation', this.currentGenerationCount],
         ['parent1', 'first generation'],
         ['parent2', 'first generation']

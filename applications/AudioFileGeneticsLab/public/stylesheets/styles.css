@@ -1,0 +1,28 @@
+form{
+  padding: 10px;
+}
+
+#gaDNAList li{
+  list-style-type: decimal;
+  margin: 20px 50px;
+  border: dotted 1px blue;
+  padding: 10px;
+}
+#gaDNAList li:first-child{
+  border-color: green;
+}
+#gaDNAList li:last-child{
+  border-color: red;
+}
+#rootSpan{
+  color:#f0f;
+}
+.parent1DNA{
+  color:orange;
+}
+.parent2DNA{
+  color:blue;
+}
+.mutatedDNA{
+  color:red;
+}

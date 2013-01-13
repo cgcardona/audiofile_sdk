@@ -3,98 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="description" content="">
-    <title>AudioFile Dashboard</title>
+    <title>AudioFile Genetics Lab</title>
     <link rel="stylesheet" href="./stylesheets/reset.css" media="screen">
-    <!--link rel="stylesheet" href="./stylesheets/styles.css" media="screen"-->
-    <style>
-      form{
-        padding: 10px;
-      }
-
-      #gaDNAList li{
-        list-style-type: decimal;
-        margin: 20px 50px;
-        border: dotted 1px blue;
-        padding: 10px;
-      }
-      #gaDNAList li:first-child{
-        border-color: green;
-      }
-      #gaDNAList li:last-child{
-        border-color: red;
-      }
-      #rootSpan{
-        color:#f0f;
-      }
-      .parent1DNA{
-        color:orange;
-      }
-      .parent2DNA{
-        color:blue;
-      }
-      .mutatedDNA{
-        color:red;
-      }
-    </style>
+    <link rel="stylesheet" href="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/stylesheets/styles.css" media="screen">
   </head>
   <body>
-    <div id='AFUIGeneticsLab'></div>
-    <script src="./javascripts/jquery.js"></script>
-    <script src="./javascripts/underscore.js"></script>
-    <script src="./javascripts/audiofile_sdk.js"></script>
-    <script>
-      window.onload = function()
-      {
-        afUIGeneticsLab = new AFUIGeneticsLab();
-        $('#AFUIGeneticsLab').html(afUIGeneticsLab.buildDom());
-        $('#AFUIGeneticsLab').html(afUIGeneticsLab.attachEventListeners());
-
-        // start left column
-        // left column wrapper div
-        //var wrapperLeftColDiv       = document.createElement('div');
-        //wrapperLeftColDiv.id        = 'desc';
-        //wrapperLeftColDiv.style.display = 'inline-block';
-        //wrapperLeftColDiv.style.width = '35%';
-
-        //// left column h1 
-        //var leftColHeader1       = document.createElement('h1');
-        //leftColHeader1.innerText = 'Welcome to Audiofile';
-        //leftColHeader1.style.fontWeight = 200;
-
-        //// left column h2 
-        //var leftColHeader2       = document.createElement('h2');
-        //leftColHeader2.innerText = 'What do you want to hear today?';
-        //leftColHeader2.style.fontWeight = 200;
-
-        //// build the left column 
-        //wrapperLeftColDiv.appendChild(leftColHeader1);
-        //wrapperLeftColDiv.appendChild(leftColHeader2);
-        //// end the left column 
-
-        //// start the right column 
-        //var wrapperRightColDiv                   = document.createElement('div');
-        //wrapperRightColDiv.id                    = 'menu';
-        //wrapperRightColDiv.innerText             = 'This is the grid menu';
-        //wrapperRightColDiv.style.display         = 'inline-block';
-        //wrapperRightColDiv.style.width           = '64%';
-        //wrapperRightColDiv.style.verticalAlign   = 'top';
-        //wrapperRightColDiv.style.backgroundColor = '#ADADAD';
-        //// end the right column 
-
-        //// the outside wrapper div
-        //var wrapperDiv       = document.createElement('div');
-        //wrapperDiv.id        = 'afDashboardColumnContainer';
-        //wrapperDiv.className = 'afColumnLayout';
-        //wrapperDiv.style.fontFamily = 'helvetica';
-        //wrapperDiv.style.fontWeight = 200;
-        //// insert the left and right columns
-        //wrapperDiv.appendChild(wrapperLeftColDiv);
-        //wrapperDiv.appendChild(wrapperRightColDiv);
-
-        //// insert into the body
-        //document.body.appendChild(wrapperDiv);
-      };
-    </script>
-    <!--script src="./javascripts/scripts.js"></script-->
+  <div id='AFUIGeneticsLab'>
+    <form id='gaForm'>
+      <h1>Genetics Lab</h1>
+      <p>Generations Size: <input type="range" min="1" max="100" step="1" id="generationSize"></p>
+      <p>Generation Count: <input value="2" type="range" min="1" max="10" step="1" id="generationCount"></p>
+      <p>DNA Bit Count: <input value="8" id="dnaBitCount" placeholder="DNA Bit Count"></p>
+      <p>Potential Step Count: <input value="3" id="dnaStepCount" placeholder="Potential Step Count"></p>
+      <p>Desired Scale Steps: <input value="1,3,5,6,8,10,11" id="scaleSteps" placeholder="Desired Scale Steps"></p>
+      <button id="gaSubmit">Generate DNA</button>
+    </form>
+    <div>
+      <ol id='gaDNAList'>
+      </ol>
+    </div>
+  </div>
+    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/javascripts/jquery.js"></script>
+    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/javascripts/underscore.js"></script>
+    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/javascripts/audiofile_sdk.js"></script>
+    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/publicjavascripts/scripts.js"></script>
   </body>
 </html>

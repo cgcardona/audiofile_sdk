@@ -1,5 +1,6 @@
 /*jshint globalstrict:true*/
 /*global $:false */
+/*global _:false */
 /*global console:false */
 /*global window:false */
 /*global document:false */
@@ -65,9 +66,9 @@ AFApplicationManager.startAFApplication = function(startAppJson)
 {
   if(!this.hasActiveApplication)
   {
-      this.activeApplication = Object.create(AFApplication);
-      this.hasActiveApplication = true;
-      this.activeApplication.init(startAppJson.controller);
+    this.activeApplication = Object.create(AFApplication);
+    this.hasActiveApplication = true;
+    this.activeApplication.init(startAppJson.controller);
   }
 };
 
@@ -87,33 +88,33 @@ AFApplication.init = function(applicationControllerName)
 
 AFApplication.getApplicationManifest = function()
 {
-  var ctx = this;
+  var self = this;
   // $.getJSON grabs the manifest which has the app's controller's name
   $.getJSON('applications/' + this.applicationControllerName + '/config/AFManifest.json', function(data)
   {
-    ctx.applicationManifest = data;
-    ctx.getApplicationController();
+    self.applicationManifest = data;
+    self.getApplicationController();
   });
 };
 
 AFApplication.getApplicationController = function()
 {
-  var ctx = this;
+  var self = this;
   $.getScript('applications/' + this.applicationControllerName + '/controllers/' + this.applicationControllerName + 'Controller.js', function(data, textStatus, jqxhr)
   {
-    ctx.applicationController = Object.create(window[ctx.applicationControllerName + 'Controller']);
-    ctx.getApplicationDOM();
+    self.applicationController = Object.create(window[self.applicationControllerName + 'Controller']);
+    self.getApplicationDOM();
   });
 };
 
 AFApplication.getApplicationDOM = function()
 {
-  var ctx = this;
+  var self = this;
   $.get('applications/' + this.applicationControllerName + '/views/index.html', function(data)
   {
-    ctx.applicationDOM = data;
-    ctx.startApplication();
-    //ctx.createWebWorker();
+    self.applicationDOM = data;
+    self.startApplication();
+    //self.createWebWorker();
   });
 };
 
@@ -320,74 +321,12 @@ AFURL.createObjectURL = function(afBlob)
   return URL.createObjectURL(afBlob);
 };
 
-// This is the first and only Object created from the audiofile_sdk index.html file
-var AFCore = Object.create(AFObject);
-AFCore.init = function()
-{
-  var afCoreController = Object.create(AFCoreController);
-  afCoreController.onAFApplicationStart();
-};
-
-// Below here is where i'm just stashing stuff and none of this should be getting used (in theory)
-//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
-//console.log(AFApplicationManager.isPrototypeOf(afApplicationManager));
-var AFUI = (function()
-{
-  function AFUI(context)
-  {
-    this.ctx = context;
-  }
-
-  AFUI.prototype.buildDom = function(domModules)
-  {
-    var that = this;
-    $(domModules).each(function(indx, elmnt){
-      $('#' + this).html(that.ctx[elmnt].buildDom());
-      $('#' + this).html(that.ctx[elmnt].attachEventListeners());
-    });
-  };
-
-  return AFUI;
-})();
-
-var AFSDK = (function()
-{
-  function AFSDK(settings)
-  {
-    var domModules = [];
-
-    if(settings.modules.ga === true)
-    {
-      this.AFGeneticsLab = new AFGeneticsLab();
-      this.AFUIGeneticsLab = new AFUIGeneticsLab(this);
-      domModules.push('AFUIGeneticsLab');
-    }
-
-    this.UI = new FUI(this);
-    this.UI.buildDom(domModules);
-
-    //if(settings.modules.parser === true)
-    //  this.Parser  = new AFParser();
-
-    //if(settings.modules.painter === true)
-    //  this.Painter = new AFPainter();
-
-    //if(settings.modules.speaker === true)
-    //  this.Speaker = new AFSpeaker();
-  }
-
-  return AFSDK;
-})();
-
 var AFGeneticsLab = Object.create(AFObject); 
-
 AFGeneticsLab.updateSettings = function(settings)
 {
-  this.generationSize  = settings.generationSize;
-  this.generationCount = settings.generationCount;
-  this.dnaBitCount     = settings.dnaBitCount;
-  this.dnaStepCount    = settings.dnaStepCount;
-  this.scaleSteps      = settings.scaleSteps;
+  _.each(settings, function(value, key, list){
+    this[key] = value;
+  }, this);
 };
 
 AFGeneticsLab.generateCreatures = function()
@@ -421,11 +360,11 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
   var dnaBits = dnaStrand.split('');
   var fitnessScore = 0;
 
-  var ctx = this;
+  var self = this;
   $(dnaBits).each(function(indx, elmnt){
-    if(elmnt == 0 && soundState == true)
+    if(elmnt === 0 && soundState === true)
       soundState = false;
-    else if(elmnt == 0 && soundState == false)
+    else if(elmnt === 0 && soundState === false)
       soundState = true;
 
     if(elmnt == 1)
@@ -434,15 +373,15 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     if(elmnt == 2)
       toneState -= 1;
 
-    if(toneState == 0)
+    if(toneState === 0)
       toneState = 12;
     else if(toneState == 13)
       toneState = 1;
 
-    if(soundState == false)
+    if(soundState === false)
       fitnessScore -= 5;
 
-    if(_.contains(ctx.scaleSteps, toneState.toString()))
+    if(_.contains(self.scaleSteps, toneState.toString()))
       fitnessScore += 10;
     else
       fitnessScore -= 10;
@@ -507,15 +446,15 @@ AFGeneticsLab.mateDNA = function(generation, name)
   var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
 
   var createNewCreaturesArray = [];
-  var ctx = this;
+  var self = this;
 
   $(concatDNAStrands).each(function(indx, elment){
     createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
         ['name', 'need to figure out how to get the name here'],
         ['dna', elment[1]],
-        ['fitness',  ctx.gradeDNA(elment[0])],
-        ['generation', ctx.currentGenerationCount],
+        ['fitness',  self.gradeDNA(elment[0])],
+        ['generation', self.currentGenerationCount],
         ['parent1', parent1],
         ['parent2', parent2]
       ])
@@ -537,6 +476,17 @@ AFGeneticsLab.mutateDNA = function(dnaStrand)
   $(spanElmnt1).append(childSliceA);
   return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
 };
+
+// This is the first and only Object created from the audiofile_sdk index.html file
+var AFCore = Object.create(AFObject);
+AFCore.init = function()
+{
+  var afCoreController = Object.create(AFCoreController);
+  afCoreController.onAFApplicationStart();
+};
+
+//return AFTextInputField.prototype.constructor.call(autofocus, placeholder);
+//console.log(AFApplicationManager.isPrototypeOf(afApplicationManager));
 
 var AFParser = (function()
 {
@@ -587,30 +537,4 @@ var AFParser = (function()
   };
 
   return AFParser;
-})();
-
-var AFPainter = (function()
-{
-  function AFPainter()
-  {
-  }
-  
-  AFPainter.prototype.paint = function(dataObj)
-  {
-  };
-
-  return AFPainter;
-})();
-
-var AFSpeaker = (function()
-{
-  function AFSpeaker()
-  {
-  }
-  
-  AFSpeaker.prototype.speak = function(dataOb)
-  {
-  };
-
-  return AFSpeaker;
 })();

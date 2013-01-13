@@ -341,7 +341,7 @@ AFGeneticsLab.generateCreatures = function()
   {
     var dnaString = '';
     for(var i = 0; i < this.dnaBitCount; i++)
-      dnaString += Math.floor((Math.random() * this.dnaStepCount));
+      dnaString += _.random(0, this.dnaStepCount);
 
     generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
@@ -450,9 +450,10 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
     parent2SliceB = parent2.dna[0].innerText.slice(dnaBreakPoint);
   }
 
-  //console.log(parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB);
+  var parentArray = [parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB];
+  var parentToMutate = _.random(0, 3);
 
-  var mutateDNA = Math.floor((Math.random() * 20) + 0);
+  var mutateDNA = _.random(0, 19);
   if(mutateDNA < 15)
   {
     var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
@@ -469,8 +470,8 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
   var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
 
   var createNewCreaturesArray = [];
-  var self = this;
 
+  var self = this;
   var name;
   $(concatDNAStrands).each(function(indx, elment){
     if(indx === 0)
@@ -495,11 +496,11 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
 AFGeneticsLab.mutateDNA = function(dnaStrand)
 {
-  var counter = Math.floor((Math.random() * (dnaStrand.length - 1)) + 1);
+  var counter = _.random(1, (dnaStrand.length - 1));
   var parentSliceA = dnaStrand.slice(0, counter);
   var parentSliceB = dnaStrand.slice(counter);
   var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
-  var mutatedGene = Math.floor((Math.random() * (this.dnaStepCount)) + 0);
+  var mutatedGene = _.random(0, this.dnaStepCount);
   var spanElmnt1 = $('<span></span>');
   var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
   $(spanElmnt1).append(childSliceA);

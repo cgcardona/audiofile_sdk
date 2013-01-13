@@ -10,7 +10,7 @@ window.onload = function()
 {
   var afGeneticsLab = Object.create(AFGeneticsLab);
 
-  $('#gaSubmit').click(function(evnt) {
+  $('#gaSubmit').click(function(evnt){
     afGeneticsLab.setProperties({
       generationSize  : parseInt($('#generationSize').val(), 10),
       generationCount : parseInt($('#generationCount').val(), 10),
@@ -25,17 +25,17 @@ window.onload = function()
     // Because it's the first generation wrap their dna property in a span with a class
     _.each(generationOfCreatures, function(value, key){
       var rootSpan = $('<span class="root">' + value.dna + '</span>');
-      value.dna = rootSpan;
+      value.dna    = rootSpan;
     }, this);
 
     // Evolve them and sort by fitness score
     var evolvedGenerationOfCreatures = afGeneticsLab.evolveDNA(generationOfCreatures);
-    var sortedGenerationOfCreatures = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+    var sortedGenerationOfCreatures  = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
+    // Wrap each creature in some markup to display on the screen
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 
-      //console.log(elmnt.dna);
       var domEls = [
         $('<p>Name: ' + elmnt.name + '</p>'),
         $('<p>Generation: ' + elmnt.generation + '</p>'),

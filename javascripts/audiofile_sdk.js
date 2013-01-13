@@ -400,14 +400,18 @@ AFGeneticsLab.evolveDNA = function(generation)
 {
   for(var itr = 0; itr < this.generationCount - 1; itr++)
   {
-    var mateDNAArray = [];
+    var matedDNA = [];
     this.currentGenerationCount++;
 
     for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
-      mateDNAArray.push(this.mateDNA(generation, itertr));
-      
+    {
+      var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+      var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+      matedDNA.push(this.mateDNA(parent1, parent2, itertr));
+    }
+
     var generation = [];
-    $(mateDNAArray).each(function(inxx, ell){
+    $(matedDNA).each(function(inxx, ell){
       $(ell).each(function(innx, elmm){
         generation.push(elmm);
       });
@@ -416,16 +420,13 @@ AFGeneticsLab.evolveDNA = function(generation)
   return generation;
 };
 
-AFGeneticsLab.mateDNA = function(generation, name)
+AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 {
   // here is where the two parent are chosen.
   // how can we weight the selection ever greater in favor of higher fitness
   // rated creatures?
   // length of generation array - current creatures index in current
   // generation array gives assigned probability
-
-  var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
-  var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
 
   var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
   
@@ -471,10 +472,16 @@ AFGeneticsLab.mateDNA = function(generation, name)
   var createNewCreaturesArray = [];
   var self = this;
 
+  
   $(concatDNAStrands).each(function(indx, elment){
+    if(indx == 0)
+      name = ((itertr + 1) * 2) - 1;
+    else
+      name = ((itertr + 1) * 2);
+
     createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
-        ['name', 'need to figure out how to get the name here'],
+        ['name', name],
         ['dna', elment[1]],
         ['fitness',  self.gradeDNA(elment[0])],
         ['generation', self.currentGenerationCount],

@@ -2,9 +2,9 @@
 /*global $:false */
 /*global _:false */
 /*global AFGeneticsLab:false */
+'use strict';
 window.onload = function()
 {
-  'use strict';
   var afGeneticsLab = Object.create(AFGeneticsLab);
 
   $('#gaSubmit').click(function(evnt) {
@@ -21,7 +21,7 @@ window.onload = function()
 
     // Because it's the first generation wrap their dna property in a span with a class
     _.each(generationOfCreatures, function(value, key){
-      var rootSpan = $('<span class="rootSpan">' + value.dna + '</span>');
+      var rootSpan = $('<span class="root">' + value.dna + '</span>');
       value.dna = rootSpan;
     }, this);
 
@@ -32,6 +32,7 @@ window.onload = function()
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 
+      //console.log(elmnt.dna);
       var domEls = [
         $('<p>Name: ' + elmnt.name + '</p>'),
         $('<p>Generation: ' + elmnt.generation + '</p>'),

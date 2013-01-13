@@ -430,23 +430,24 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
   
-  if(parent1.dna[1] != undefined)
+  var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;
+  if(parent1.dna[1] !== undefined)
   {
     var tmpParent1 = parent1.dna[0].innerText + parent1.dna[1].innerText;
-    var parent1SliceA = tmpParent1.slice(0, dnaBreakPoint);
-    var parent1SliceB = tmpParent1.slice(dnaBreakPoint);
+    parent1SliceA = tmpParent1.slice(0, dnaBreakPoint);
+    parent1SliceB = tmpParent1.slice(dnaBreakPoint);
   
-    var tmpParent1 = parent2.dna[0].innerText + parent2.dna[1].innerText;
-    var parent2SliceA = tmpParent1.slice(0, dnaBreakPoint);
-    var parent2SliceB = tmpParent1.slice(dnaBreakPoint);
+    var tmpParent2 = parent2.dna[0].innerText + parent2.dna[1].innerText;
+    parent2SliceA = tmpParent2.slice(0, dnaBreakPoint);
+    parent2SliceB = tmpParent2.slice(dnaBreakPoint);
   }
   else
   {
-    var parent1SliceA = parent1.dna[0].innerText.slice(0, dnaBreakPoint);
-    var parent1SliceB = parent1.dna[0].innerText.slice(dnaBreakPoint);
+    parent1SliceA = parent1.dna[0].innerText.slice(0, dnaBreakPoint);
+    parent1SliceB = parent1.dna[0].innerText.slice(dnaBreakPoint);
   
-    var parent2SliceA = parent2.dna[0].innerText.slice(0, dnaBreakPoint);
-    var parent2SliceB = parent2.dna[0].innerText.slice(dnaBreakPoint);
+    parent2SliceA = parent2.dna[0].innerText.slice(0, dnaBreakPoint);
+    parent2SliceB = parent2.dna[0].innerText.slice(dnaBreakPoint);
   }
 
   //console.log(parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB);
@@ -470,9 +471,9 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
   var createNewCreaturesArray = [];
   var self = this;
 
-  
+  var name;
   $(concatDNAStrands).each(function(indx, elment){
-    if(indx == 0)
+    if(indx === 0)
       name = ((itertr + 1) * 2) - 1;
     else
       name = ((itertr + 1) * 2);

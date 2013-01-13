@@ -1,6 +1,9 @@
 /*jshint globalstrict:true*/
 /*global $:false */
 /*global _:false */
+/*global window:false */
+/*global document:false */
+/*global console:false */
 /*global AFGeneticsLab:false */
 'use strict';
 window.onload = function()

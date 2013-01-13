@@ -1,11 +1,7 @@
 window.onload = function()
 {
   'use strict';
-  var afGeneticsLab = Object.create(AFGeneticsLab, AFUtility.createPropertiesObject(
-    [
-      ['currentGenerationCount', 1]
-    ])
-  );
+  var afGeneticsLab = Object.create(AFGeneticsLab);
 
   $('#gaSubmit').click(function(evnt) {
     afGeneticsLab.updateSettings({

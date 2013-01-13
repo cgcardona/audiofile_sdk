@@ -321,7 +321,11 @@ AFURL.createObjectURL = function(afBlob)
   return URL.createObjectURL(afBlob);
 };
 
-var AFGeneticsLab = Object.create(AFObject); 
+var AFGeneticsLab = Object.create(AFObject, AFUtility.createPropertiesObject(
+    [
+      ['currentGenerationCount', 1]
+    ])
+); 
 AFGeneticsLab.updateSettings = function(settings)
 {
   _.each(settings, function(value, key, list){

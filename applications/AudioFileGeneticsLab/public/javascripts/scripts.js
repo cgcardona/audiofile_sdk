@@ -1,6 +1,12 @@
 window.onload = function()
 {
-  afGeneticsLab = new AFGeneticsLab();
+  'use strict';
+  var afGeneticsLab = Object.create(AFGeneticsLab, AFUtility.createPropertiesObject(
+    [
+      ['currentGenerationCount', 1]
+    ])
+  );
+
   $('#gaSubmit').click(function(evnt) {
     afGeneticsLab.updateSettings({
       generationSize  : parseInt($('#generationSize').val(), 10),
@@ -11,6 +17,7 @@ window.onload = function()
       gaSubmit        : parseInt($('#gaSubmit').val(), 10)
     });
 
+    // create a generation of creatures and evolve/sort them
     var sortedEvolvedGenerationOfCreatures = afGeneticsLab.evolveDNA(afGeneticsLab.generateCreatures()).sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
     $(sortedEvolvedGenerationOfCreatures).each(function(indx, elmnt){

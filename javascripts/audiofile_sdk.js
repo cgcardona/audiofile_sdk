@@ -379,172 +379,164 @@ var AFSDK = (function()
   return AFSDK;
 })();
 
-var AFGeneticsLab = (function()
+var AFGeneticsLab = Object.create(AFObject); 
+
+AFGeneticsLab.updateSettings = function(settings)
 {
-  function AFGeneticsLab()
+  this.generationSize  = settings.generationSize;
+  this.generationCount = settings.generationCount;
+  this.dnaBitCount     = settings.dnaBitCount;
+  this.dnaStepCount    = settings.dnaStepCount;
+  this.scaleSteps      = settings.scaleSteps;
+};
+
+AFGeneticsLab.generateCreatures = function()
+{
+  var generation = [];
+  for(var x = 0; x < this.generationSize; x++)
   {
-    this.currentGenerationCount = 1;
+    var tmpString = '';
+    for(var i = 0; i < this.dnaBitCount; i++)
+      tmpString += Math.floor((Math.random() * this.dnaStepCount));
+
+    var rootSpan = $('<span id="rootSpan">' + tmpString + '</span>');
+    generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
+      [
+        ['name', (x + 1)],
+        ['dna', rootSpan[0]],
+        ['fitness', this.gradeDNA(tmpString).toString()],
+        ['generation', this.currentGenerationCount],
+        ['parent1', 'first generation'],
+        ['parent2', 'first generation']
+      ])
+    ));
   }
+  return generation;
+};
 
-  AFGeneticsLab.prototype.updateSettings = function(settings)
-  {
-    this.generationSize  = settings.generationSize;
-    this.generationCount = settings.generationCount;
-    this.dnaBitCount     = settings.dnaBitCount;
-    this.dnaStepCount    = settings.dnaStepCount;
-    this.scaleSteps      = settings.scaleSteps;
-  };
+AFGeneticsLab.gradeDNA = function(dnaStrand)
+{
+  var soundState = true;
+  var toneState = 1;
+  var dnaBits = dnaStrand.split('');
+  var fitnessScore = 0;
 
-  AFGeneticsLab.prototype.generateCreatures = function()
-  {
-    var generation = [];
-    for(var x = 0; x < this.generationSize; x++)
-    {
-      var tmpString = '';
-      for(var i = 0; i < this.dnaBitCount; i++)
-        tmpString += Math.floor((Math.random() * this.dnaStepCount));
+  var ctx = this;
+  $(dnaBits).each(function(indx, elmnt){
+    if(elmnt == 0 && soundState == true)
+      soundState = false;
+    else if(elmnt == 0 && soundState == false)
+      soundState = true;
 
-      var rootSpan = $('<span id="rootSpan">' + tmpString + '</span>');
-      generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
-        [
-          ['name', (x + 1)],
-          ['dna', rootSpan[0]],
-          ['fitness', this.gradeDNA(tmpString).toString()],
-          ['generation', this.currentGenerationCount],
-          ['parent1', 'first generation'],
-          ['parent2', 'first generation']
-        ])
-      ));
-    }
-    return generation;
-  };
+    if(elmnt == 1)
+      toneState += 1;
 
-  AFGeneticsLab.prototype.gradeDNA = function(dnaStrand)
-  {
-    var soundState = true;
-    var toneState = 1;
-    var dnaBits = dnaStrand.split('');
-    var fitnessScore = 0;
+    if(elmnt == 2)
+      toneState -= 1;
 
-    var ctx = this;
-    $(dnaBits).each(function(indx, elmnt){
-      if(elmnt == 0 && soundState == true)
-        soundState = false;
-      else if(elmnt == 0 && soundState == false)
-        soundState = true;
+    if(toneState == 0)
+      toneState = 12;
+    else if(toneState == 13)
+      toneState = 1;
 
-      if(elmnt == 1)
-        toneState += 1;
+    if(soundState == false)
+      fitnessScore -= 5;
 
-      if(elmnt == 2)
-        toneState -= 1;
-
-      if(toneState == 0)
-        toneState = 12;
-      else if(toneState == 13)
-        toneState = 1;
-
-      if(soundState == false)
-        fitnessScore -= 5;
-
-      if(_.contains(ctx.scaleSteps, toneState.toString()))
-        fitnessScore += 10;
-      else
-        fitnessScore -= 10;
-    });
-
-    return fitnessScore;
-  };
-
-  AFGeneticsLab.prototype.evolveDNA = function(generation)
-  {
-    for(var itr = 0; itr < this.generationCount - 1; itr++)
-    {
-      var mateDNAArray = [];
-      this.currentGenerationCount++;
-
-      for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
-        mateDNAArray.push(this.mateDNA(generation, itertr));
-        
-      var generation = [];
-      $(mateDNAArray).each(function(inxx, ell){
-        $(ell).each(function(innx, elmm){
-          generation.push(elmm);
-        });
-      });
-    }
-    return generation;
-  };
-
-  AFGeneticsLab.prototype.mateDNA = function(generation, name)
-  {
-    // here is where the two parent are chosen.
-    // how can we weight the selection ever greater in favor of higher fitness
-    // rated creatures?
-    // length of generation array - current creatures index in current
-    // generation array gives assigned probability
-
-    var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
-    var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
-
-    var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
-    
-    var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
-    var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
-    
-    var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
-    var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
-
-    var mutateDNA = Math.floor((Math.random() * 20) + 0);
-    if(mutateDNA < 15)
-    {
-      var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
-      $(tmpSpanEL1A).append(this.mutateDNA(parent1SliceA));
-    }
+    if(_.contains(ctx.scaleSteps, toneState.toString()))
+      fitnessScore += 10;
     else
-      var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+      fitnessScore -= 10;
+  });
 
-    var tmpSpanEL1B = $('<span class="parent1DNA">' + parent1SliceB + '</span>');
+  return fitnessScore;
+};
 
-    var tmpSpanEL2A = $('<span class="parent2DNA">' + parent2SliceA + '</span>');
-    var tmpSpanEL2B = $('<span class="parent2DNA">' + parent2SliceB + '</span>');
-
-    var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
-
-    var createNewCreaturesArray = [];
-    var ctx = this;
-
-    $(concatDNAStrands).each(function(indx, elment){
-      createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
-        [
-          ['name', 'need to figure out how to get the name here'],
-          ['dna', elment[1]],
-          ['fitness',  ctx.gradeDNA(elment[0])],
-          ['generation', ctx.currentGenerationCount],
-          ['parent1', parent1],
-          ['parent2', parent2]
-        ])
-      ));
-    });
-
-    return createNewCreaturesArray;
-  };
-
-  AFGeneticsLab.prototype.mutateDNA = function(dnaStrand)
+AFGeneticsLab.evolveDNA = function(generation)
+{
+  for(var itr = 0; itr < this.generationCount - 1; itr++)
   {
-    var counter = Math.floor((Math.random() * (dnaStrand.length - 1)) + 1);
-    var parentSliceA = dnaStrand.slice(0, counter);
-    var parentSliceB = dnaStrand.slice(counter);
-    var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
-    var mutatedGene = Math.floor((Math.random() * (this.dnaStepCount)) + 0);
-    var spanElmnt1 = $('<span></span>');
-    var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
-    $(spanElmnt1).append(childSliceA);
-    return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
-  };
+    var mateDNAArray = [];
+    this.currentGenerationCount++;
 
-  return AFGeneticsLab;
-})();
+    for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
+      mateDNAArray.push(this.mateDNA(generation, itertr));
+      
+    var generation = [];
+    $(mateDNAArray).each(function(inxx, ell){
+      $(ell).each(function(innx, elmm){
+        generation.push(elmm);
+      });
+    });
+  }
+  return generation;
+};
+
+AFGeneticsLab.mateDNA = function(generation, name)
+{
+  // here is where the two parent are chosen.
+  // how can we weight the selection ever greater in favor of higher fitness
+  // rated creatures?
+  // length of generation array - current creatures index in current
+  // generation array gives assigned probability
+
+  var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+  var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+
+  var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
+  
+  var parent1SliceA = parent1.dna.innerText.slice(0, dnaBreakPoint);
+  var parent1SliceB = parent1.dna.innerText.slice(dnaBreakPoint);
+  
+  var parent2SliceA = parent2.dna.innerText.slice(0, dnaBreakPoint);
+  var parent2SliceB = parent2.dna.innerText.slice(dnaBreakPoint);
+
+  var mutateDNA = Math.floor((Math.random() * 20) + 0);
+  if(mutateDNA < 15)
+  {
+    var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
+    $(tmpSpanEL1A).append(this.mutateDNA(parent1SliceA));
+  }
+  else
+    var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+
+  var tmpSpanEL1B = $('<span class="parent1DNA">' + parent1SliceB + '</span>');
+
+  var tmpSpanEL2A = $('<span class="parent2DNA">' + parent2SliceA + '</span>');
+  var tmpSpanEL2B = $('<span class="parent2DNA">' + parent2SliceB + '</span>');
+
+  var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
+
+  var createNewCreaturesArray = [];
+  var ctx = this;
+
+  $(concatDNAStrands).each(function(indx, elment){
+    createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
+      [
+        ['name', 'need to figure out how to get the name here'],
+        ['dna', elment[1]],
+        ['fitness',  ctx.gradeDNA(elment[0])],
+        ['generation', ctx.currentGenerationCount],
+        ['parent1', parent1],
+        ['parent2', parent2]
+      ])
+    ));
+  });
+
+  return createNewCreaturesArray;
+};
+
+AFGeneticsLab.mutateDNA = function(dnaStrand)
+{
+  var counter = Math.floor((Math.random() * (dnaStrand.length - 1)) + 1);
+  var parentSliceA = dnaStrand.slice(0, counter);
+  var parentSliceB = dnaStrand.slice(counter);
+  var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
+  var mutatedGene = Math.floor((Math.random() * (this.dnaStepCount)) + 0);
+  var spanElmnt1 = $('<span></span>');
+  var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
+  $(spanElmnt1).append(childSliceA);
+  return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
+};
 
 var AFParser = (function()
 {

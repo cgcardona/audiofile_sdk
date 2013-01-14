@@ -83,20 +83,12 @@ AFGeneticsLab.generateCreatures = function()
   return generation;
 };
 
-AFGeneticsLab.incrementNote = function(letterToIncrement){
-  var indexOfLetter = _.indexOf(this.validNotes, letterToIncrement);
-  if (indexOfLetter + 1 <= this.validNotes.length)
-    return(this.validNotes[indexOfLetter + 1]);
-  else
-    return(letterToIncrement);
+AFGeneticsLab.incrementNote = function(indexOfNote){
+  return(this.validNotes[indexOfNote + 1]);
 };
 
-AFGeneticsLab.decrementNote = function(letterToDecrement){
-  var indexOfLetter = _.indexOf(this.validNotes, letterToDecrement);
-  if(indexOfLetter - 1 < 0)
-    return(letterToDecrement);
-  else
-    return(this.validNotes[indexOfLetter - 1]);
+AFGeneticsLab.decrementNote = function(noteToDecrement, indexOfNote){
+  return(this.validNotes[indexOfNote - 1]);
 };
 
 AFGeneticsLab.gradeDNA = function(dnaStrand)
@@ -108,21 +100,34 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
   var dnaBits       = dnaStrand.split('');
   var fitnessScore  = 0;
   var currentNote   = this.validNotes[this.musicKey];
-  var currentOctave = this.octave;
+  var currentOctave = parseInt(this.octave, 10);
   var noteString    = '| ';
   var self          = this;
+  var indexOfNote = _.indexOf(self.validNotes, currentNote);
 
   $(dnaBits).each(function(indx, elmnt){
+    var elmnt = 2;
     if(elmnt == 1)
     {
       toneState += 1;
-      currentNote = self.incrementNote(currentNote);
+
+      if(indexOfNote == 11 && indx === 0)
+        currentOctave += 1;
+
+      if(indexOfNote == 11)
+        indexOfNote = -1;
+
+      currentNote = self.incrementNote(indexOfNote);
     }
     else if(elmnt == 2)
     {
       toneState -= 1;
-      currentNote = self.decrementNote(currentNote);
+      if(indexOfNote === 0)
+        indexOfNote = 12;
+
+      currentNote = self.decrementNote(currentNote, indexOfNote);
     }
+    indexOfNote = _.indexOf(self.validNotes, currentNote);
 
     if(toneState === 0)
     {
@@ -132,7 +137,7 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     else if(toneState == 13)
     {
       toneState = 1;
-      currentOctave -= 1;
+      currentOctave += 1;
     }
 
     if(elmnt === '0' && soundState === true)
@@ -190,7 +195,6 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
   // generation array gives assigned probability
 
   var dnaBreakPoint  = _.random((this.dnaBitCount - 2), 2);
-  //var dnaBreakPoint = 1;
   
   var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;
   if(parent1.dna[1] !== undefined)

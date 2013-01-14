@@ -2,7 +2,7 @@ var AudioFileGeneticsLabController = Object.create(AFController);
 
 AudioFileGeneticsLabController.onAFApplicationStart = function()
 {
-  console.log('AudioFile Genetics Lab App!');
+  //console.log('AudioFile Genetics Lab App!');
 };
 
 AudioFileGeneticsLabController.onAFApplicationStop = function(){};

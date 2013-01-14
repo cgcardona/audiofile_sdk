@@ -125,9 +125,15 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     }
 
     if(toneState === 0)
+    {
       toneState = 12;
+      currentOctave -= 1;
+    }
     else if(toneState == 13)
+    {
       toneState = 1;
+      currentOctave -= 1;
+    }
 
     if(elmnt === '0' && soundState === true)
       soundState = false;
@@ -160,8 +166,8 @@ AFGeneticsLab.evolveDNA = function(generation)
 
     for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
     {
-      var parent1 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
-      var parent2 = generation[Math.floor((Math.random() * this.generationSize) + 0)];
+      var parent1 = generation[_.random(this.generationSize - 1)];
+      var parent2 = generation[_.random(this.generationSize - 1)];
       matedDNA.push(this.mateDNA(parent1, parent2, itertr));
     }
 

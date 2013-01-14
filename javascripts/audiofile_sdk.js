@@ -8,6 +8,8 @@
 /*global CustomEvent:false */
 /*global Blob:false */
 /*global URL:false */
+/*global AFObject:false */
+/*global AFUtility:false */
 'use strict';
 
 var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
@@ -130,7 +132,6 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   //var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
   var dnaBreakPoint = 1;
-  //console.log(dnaBreakPoint);
   
   var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;
   if(parent1.dna[1] !== undefined)
@@ -175,12 +176,11 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   var mutateDNA = _.random(0, 19);
   //if(mutateDNA < 10)
-  if(true)
+  if(false)
   {
     var parentToMutate = _.random(0, 3);
     parents[parentKeys[parentToMutate]] = this.mutateDNA(parents[parentKeys[parentToMutate]][1]);
   }
-    console.log(parents);
 
   var tmpSpanEl1A, tmpSpanEl1B, tmpSpanEl2A, tmpSpanEl2B;
   if(parents.parent1SliceA[2] !== undefined)
@@ -219,7 +219,7 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
       [
         ['name', name],
         ['dna', elment[1]],
-        ['fitness',  self.gradeDNA(elment[0])],
+        ['fitness',  self.gradeDNA(elment[0]) ? self.gradeDNA(elment[0]) : '0'],
         ['generation', self.currentGenerationCount],
         ['parent1', parent1],
         ['parent2', parent2]
@@ -232,10 +232,8 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
 AFGeneticsLab.mutateDNA = function(dnaStrand)
 {
-  console.log(dnaStrand.length);
   if(dnaStrand.length > 1)
   {
-    //console.log('and hererehere');
     var counter = _.random(1, (dnaStrand.length - 1));
     var parentSliceA = dnaStrand.slice(0, counter);
     var parentSliceB = dnaStrand.slice(counter);
@@ -248,7 +246,6 @@ AFGeneticsLab.mutateDNA = function(dnaStrand)
   }
   else
   {
-    //console.log('here');
     var mutatedGene = _.random(0, (this.dnaStepCount - 1));
     var spanElmnt2 = $('<span class="mutatedDNA">1</span>');
     return spanElmnt2;

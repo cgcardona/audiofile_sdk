@@ -1,10 +1,13 @@
 /*jshint globalstrict:true*/
 /*global $:false */
 /*global _:false */
+/*global console:false */
 /*global window:false */
 /*global document:false */
-/*global console:false */
-/*global AFGeneticsLab:false */
+/*global Worker:false */
+/*global CustomEvent:false */
+/*global Blob:false */
+/*global URL:false */
 'use strict';
 window.onload = function()
 {

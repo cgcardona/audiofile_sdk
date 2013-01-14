@@ -7,19 +7,13 @@
   <body>
     <link rel="stylesheet" href="./stylesheets/reset.css" media="screen">
     <link rel="stylesheet" href="./stylesheets/audiofile.css" media="screen">
-    <script src="javascripts/jquery.js"></script>
-    <script src="javascripts/AudioFileCore.js"></script>
-    <script src="javascripts/audiofile_sdk.js"></script>
-    <script src="javascripts/underscore.js"></script>
+    <script src="./javascripts/jquery.js"></script>
+    <script src="./javascripts/AudioFileCore.js"></script>
+    <script src="./javascripts/audiofile_sdk.js"></script>
+    <script src="./javascripts/underscore.js"></script>
     <script> 
     window.onload = function() {
-      var afCore = Object.create(AFCore); 
-      afCore.init();
-      //var afsdk = new AFSDK({
-      //  'modules' : {
-      //    'ga' : true
-      //  }
-      //});
+      Object.create(AFCore).init(); 
     } 
     </script>
   </body>

@@ -341,7 +341,7 @@ AFGeneticsLab.generateCreatures = function()
   {
     var dnaString = '';
     for(var i = 0; i < this.dnaBitCount; i++)
-      dnaString += _.random(0, this.dnaStepCount);
+      dnaString += _.random(0, (this.dnaStepCount - 1));
 
     generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
@@ -429,6 +429,7 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
   // generation array gives assigned probability
 
   var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
+  //var dnaBreakPoint = 1;
   
   var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;
   if(parent1.dna[1] !== undefined)
@@ -450,24 +451,58 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
     parent2SliceB = parent2.dna[0].innerText.slice(dnaBreakPoint);
   }
 
-  var parentArray = [parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB];
-  var parentToMutate = _.random(0, 3);
+  var parents = {
+    parent1SliceA : [
+      'parent1DNA',
+      parent1SliceA
+    ], 
+    parent1SliceB : [
+      'parent1DNA',
+      parent1SliceB
+    ], 
+    parent2SliceA : [
+      'parent2DNA',
+      parent2SliceA
+    ], 
+    parent2SliceB : [
+      'parent2DNA',
+      parent2SliceB
+    ]
+  };
+
+  var parentKeys = Object.keys(parents);
 
   var mutateDNA = _.random(0, 19);
-  if(mutateDNA < 15)
+  //if(mutateDNA < 10)
+  if(true)
   {
-    var tmpSpanEL1A = $('<span class="parent1DNA"></span>');
-    $(tmpSpanEL1A).append(this.mutateDNA(parent1SliceA));
+    var parentToMutate = _.random(0, 3);
+    parents[parentKeys[parentToMutate]] = this.mutateDNA(parents[parentKeys[parentToMutate]][1]);
   }
+    console.log(parents);
+
+  var tmpSpanEl1A, tmpSpanEl1B, tmpSpanEl2A, tmpSpanEl2B;
+  if(parents.parent1SliceA[2] !== undefined)
+    tmpSpanEl1A = $('<span class="parent1DNA">').append(parents.parent1SliceA);
   else
-    var tmpSpanEL1A = $('<span class="parent1DNA">' + parent1SliceA + '</span>');
+    tmpSpanEl1A = $('<span class="parent1DNA">' + parents.parent1SliceA[1] + '</span>');
 
-  var tmpSpanEL1B = $('<span class="parent1DNA">' + parent1SliceB + '</span>');
+  if(parents.parent1SliceB[2] !== undefined)
+    tmpSpanEl1B = $('<span class="parent1DNA">').append(parents.parent1SliceB);
+  else
+    tmpSpanEl1B = $('<span class="parent1DNA">' + parents.parent1SliceB[1] + '</span>');
 
-  var tmpSpanEL2A = $('<span class="parent2DNA">' + parent2SliceA + '</span>');
-  var tmpSpanEL2B = $('<span class="parent2DNA">' + parent2SliceB + '</span>');
+  if(parents.parent2SliceA[2] !== undefined)
+    tmpSpanEl2A = $('<span class="parent2DNA">').append(parents.parent2SliceA);
+  else
+    tmpSpanEl2A = $('<span class="parent2DNA">' + parents.parent2SliceA[1] + '</span>');
 
-  var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEL1A).after(tmpSpanEL2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEL2A).after(tmpSpanEL1B[0])]];
+  if(parents.parent2SliceB[2] !== undefined)
+    tmpSpanEl2B = $('<span class="parent2DNA">').append(parents.parent2SliceB);
+  else
+    tmpSpanEl2B = $('<span class="parent2DNA">' + parents.parent2SliceB[1] + '</span>');
+
+  var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEl1A).after(tmpSpanEl2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEl2A).after(tmpSpanEl1B[0])]];
 
   var createNewCreaturesArray = [];
 
@@ -496,15 +531,25 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
 AFGeneticsLab.mutateDNA = function(dnaStrand)
 {
-  var counter = _.random(1, (dnaStrand.length - 1));
-  var parentSliceA = dnaStrand.slice(0, counter);
-  var parentSliceB = dnaStrand.slice(counter);
-  var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
-  var mutatedGene = _.random(0, this.dnaStepCount);
-  var spanElmnt1 = $('<span></span>');
-  var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
-  $(spanElmnt1).append(childSliceA);
-  return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
+  if(dnaStrand.length > 1)
+  {
+    var counter = _.random(1, (dnaStrand.length - 1));
+    var parentSliceA = dnaStrand.slice(0, counter);
+    var parentSliceB = dnaStrand.slice(counter);
+    var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
+    var mutatedGene = _.random(0, (this.dnaStepCount - 1));
+    var spanElmnt1 = $('<span></span>');
+    var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
+    $(spanElmnt1).append(childSliceA);
+    return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
+  }
+  else
+  {
+    var mutatedGene = _.random(0, (this.dnaStepCount - 1));
+    var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
+    $(spanElmnt1).append(childSliceA);
+    return spanElmnt2;
+  }
 };
 
 // This is the first and only Object created from the audiofile_sdk index.html file

@@ -3,8 +3,22 @@ body{
   font-weight:200;
 }
 
+header{
+  background:#f3f3f3;
+  border-bottom:1px solid #e5e5e5;
+}
+
+header h1{
+  padding:10px 0;
+  font-size:1.75em;
+}
+
+.container{
+  width:1020px;
+  margin:auto;
+}
+
 form{
-  padding: 10px;
 }
 
 form > div{

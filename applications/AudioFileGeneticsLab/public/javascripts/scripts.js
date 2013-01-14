@@ -20,7 +20,7 @@ window.onload = function()
       mutationPercentage : parseInt($('#mutationPercentage').val(), 10),
       dnaBitCount        : parseInt($('#dnaBitCount').val(), 10),
       dnaStepCount       : parseInt($('#dnaStepCount').val(), 10),
-      scaleSteps         : $('#scaleSteps').val().split(',')
+      scaleSteps         : $('input:radio[name=scales]').val().split(',')
     });
 
     // create a generation of creatures
@@ -58,15 +58,31 @@ window.onload = function()
     return false;
   });
 
-  $('#generationSize').change(function(e){
-    $('#genSz').text(e.srcElement.value);
-  });
+  var elArr = [
+    [
+      'generationSize',
+      'genSz'
+    ],
+    [
+      'generationCount',
+      'genCnt'
+    ],
+    [
+      'mutationPercentage',
+      'mutPct'
+    ],
+    [ 'dnaBitCount',
+      'bitCnt'
+    ],
+    [
+      'dnaStepCount',
+      'stpCnt'
+    ]
+  ];
 
-  $('#generationCount').change(function(e){
-    $('#genCnt').text(e.srcElement.value);
-  });
-
-  $('#mutationPercentage').change(function(e){
-    $('#mutPct').text(e.srcElement.value);
+  $(elArr).each(function(indx, elmnt){
+    $('#' + elmnt[0]).change(function(e){
+      $('#' + elmnt[1]).text(e.srcElement.value);
+    });
   });
 };

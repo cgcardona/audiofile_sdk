@@ -10,6 +10,7 @@
 /*global URL:false */
 /*global AFObject:false */
 /*global AFUtility:false */
+/*global webkitAudioContext:false */
 'use strict';
 
 var AFAudioContext = Object.create(AFObject);
@@ -23,12 +24,12 @@ AFAudioContext.init = function()
   source.noteOff(0);
 };
 
-AFAudioContext.playSound = function(buffer, time) {
-    var source = context.createBufferSource();
-    source.buffer = buffer;
-    source.connect(context.destination);
-    source.noteOn(time);
-  }
+AFAudioContext.playSound = function(buffer, time){
+  var source = this.audioContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(this.audioContext.destination);
+  source.noteOn(time);
+};
 
 var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
   [
@@ -87,17 +88,16 @@ AFGeneticsLab.incrementNote = function(letterToIncrement){
     return(alphaChars.charAt(indexOfLetter + 1));
   else
     return(letterToIncrement);
-}
+};
 
 AFGeneticsLab.decrementNote = function(letterToDecrement){
   var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   var indexOfLetter = alphaChars.search(letterToDecrement);
-  console.log(indexOfLetter);
   if(indexOfLetter - 1 < 0)
     return(letterToDecrement);
   else
     return(alphaChars.charAt(indexOfLetter - 1));
-}
+};
 
 AFGeneticsLab.gradeDNA = function(dnaStrand)
 {
@@ -226,11 +226,11 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   var parentKeys = Object.keys(parents);
 
-  var mutateDNA = undefined;
+  var mutateDNA;
   if(this.mutationPercentage > 0)
     mutateDNA = _.random(0, (100 / this.mutationPercentage) - 1);
 
-  if(mutateDNA == 0)
+  if(mutateDNA === 0)
   {
     var parentToMutate = _.random(0, 3);
     parents[parentKeys[parentToMutate]] = this.mutateDNA(parents[parentKeys[parentToMutate]][1]);

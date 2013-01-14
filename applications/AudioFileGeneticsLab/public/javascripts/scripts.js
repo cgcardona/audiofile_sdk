@@ -8,6 +8,8 @@
 /*global CustomEvent:false */
 /*global Blob:false */
 /*global URL:false */
+/*global AFGeneticsLab:false */
+/*global AFAudioContext:false */
 'use strict';
 window.onload = function()
 {
@@ -88,6 +90,6 @@ window.onload = function()
     });
   });
 
-  var afAudioContext = Object.create(AFAudioContext);
-  afAudioContext.init();
+  //var afAudioContext = Object.create(AFAudioContext);
+  //afAudioContext.init();
 };

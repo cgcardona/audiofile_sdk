@@ -32,6 +32,7 @@ form > div{
 form > div > div{
   border-bottom:1px solid #e5e5e5;
   padding:10px 0 15px 0;
+  height:55px;
 }
 
 form > div > div p:first-child span{

@@ -45,7 +45,8 @@ var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
 
 var AFGeneticsLab = Object.create(AFObject, AFUtility.createPropertiesObject(
     [
-      ['currentGenerationCount', 1]
+      ['currentGenerationCount', 1],
+      ['validNotes', ['a', 'a#', 'b', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#']]
     ])
 ); 
 
@@ -82,21 +83,19 @@ AFGeneticsLab.generateCreatures = function()
 };
 
 AFGeneticsLab.incrementNote = function(letterToIncrement){
-  var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var indexOfLetter = alphaChars.search(letterToIncrement);
-  if (indexOfLetter + 1 < alphaChars.length)
-    return(alphaChars.charAt(indexOfLetter + 1));
+  var indexOfLetter = _.indexOf(this.validNotes, letterToIncrement);
+  if (indexOfLetter + 1 <= this.validNotes.length)
+    return(this.validNotes[indexOfLetter + 1]);
   else
     return(letterToIncrement);
 };
 
 AFGeneticsLab.decrementNote = function(letterToDecrement){
-  var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var indexOfLetter = alphaChars.search(letterToDecrement);
+  var indexOfLetter = _.indexOf(this.validNotes, letterToDecrement);
   if(indexOfLetter - 1 < 0)
     return(letterToDecrement);
   else
-    return(alphaChars.charAt(indexOfLetter - 1));
+    return(this.validNotes[indexOfLetter - 1]);
 };
 
 AFGeneticsLab.gradeDNA = function(dnaStrand)
@@ -107,7 +106,7 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
   var toneState    = 1;
   var dnaBits      = dnaStrand.split('');
   var fitnessScore = 0;
-  var currentNote  = 'C';
+  var currentNote  = this.validNotes[3];
   var noteString   = '';
   var self         = this;
 

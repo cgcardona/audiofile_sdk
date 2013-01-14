@@ -42,6 +42,36 @@
           <div>
             <p class='rng'><span>Desired Scale Steps:</span> <span><input checked='true' type="radio" name="scales" id="majorScaleSteps" value="1,3,5,6,8,10,11">Major Scale</span></p>
           </div>
+          <div>
+            <p class='rng'><span>Desired Key:</span> 
+            <select id='keys'>
+              <option value="0">A</option>
+              <option value="1">A#</option>
+              <option value="2">B</option>
+              <option selected='true' value="3">C</option>
+              <option value="4">C#</option>
+              <option value="5">D</option>
+              <option value="6">D#</option>
+              <option value="7">E</option>
+              <option value="8">F</option>
+              <option value="9">F#</option>
+              <option value="10">G</option>
+              <option value="11">G#</option>
+            </select>
+          </div>
+          <div>
+            <p class='rng'><span>Desired Octave:</span> 
+            <select id='octave'>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option selected='true' value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+            </select>
+          </div>
         <button id="gaSubmit">Generate DNA</button>
         </div>
       </form>

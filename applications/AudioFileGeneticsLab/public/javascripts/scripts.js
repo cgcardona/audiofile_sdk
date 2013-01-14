@@ -28,8 +28,9 @@ window.onload = function()
 
     // Because it's the first generation wrap their dna property in a span with a class
     _.each(generationOfCreatures, function(value, key){
-      var rootSpan = $('<span class="root">' + value.dna + '</span>');
-      value.dna    = rootSpan;
+      value.dna = $('<span class="root">' + value.dna + '</span>');
+      value.parent1 = $('<span class="root">' + value.parent1 + '</span>');
+      value.parent2 = $('<span class="root">' + value.parent2 + '</span>');
     }, this);
 
     // Evolve them and sort by fitness score
@@ -46,8 +47,8 @@ window.onload = function()
         $('<p>DNA: </p>').append(elmnt.dna),
         $('<p>Fitness: ' + elmnt.fitness + '</p>'),
         $('<p>Notes: ' + elmnt.notes + '</p>'),
-        $('<p>Parent1: ' + elmnt.parent1 + '</p>'),
-        $('<p>Parent2: ' + elmnt.parent2 + '</p>')
+        $('<p>Parent1: </p>').append(elmnt.parent1),
+        $('<p>Parent2: </p>').append(elmnt.parent2)
       ];
 
       $(domEls).each(function(idx, elt){

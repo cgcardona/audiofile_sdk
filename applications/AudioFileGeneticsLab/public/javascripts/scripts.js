@@ -22,7 +22,9 @@ window.onload = function()
       mutationPercentage : parseInt($('#mutationPercentage').val(), 10),
       dnaBitCount        : parseInt($('#dnaBitCount').val(), 10),
       dnaStepCount       : parseInt($('#dnaStepCount').val(), 10),
-      scaleSteps         : $('input:radio[name=scales]').val().split(',')
+      scaleSteps         : $('input:radio[name=scales]').val().split(','),
+      musicKey           : $('#keys').val(),
+      octave             : $('#octave').val()
     });
 
     // create a generation of creatures

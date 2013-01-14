@@ -46,7 +46,8 @@ var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
 var AFGeneticsLab = Object.create(AFObject, AFUtility.createPropertiesObject(
     [
       ['currentGenerationCount', 1],
-      ['validNotes', ['a', 'a#', 'b', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#']]
+      ['validNotes', ['a', 'a#', 'b', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#']],
+      ['validOctave', [0, 1, 2, 3, 4, 5, 6, 7]]
     ])
 ); 
 
@@ -102,13 +103,14 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
 {
   // right now gradeDNA is hardcoded around the notion of a 3 state dna bit.
   // This needs to be far more generic to handle a far wider range of use cases.
-  var soundState   = true;
-  var toneState    = 1;
-  var dnaBits      = dnaStrand.split('');
-  var fitnessScore = 0;
-  var currentNote  = this.validNotes[3];
-  var noteString   = '';
-  var self         = this;
+  var soundState    = true;
+  var toneState     = 1;
+  var dnaBits       = dnaStrand.split('');
+  var fitnessScore  = 0;
+  var currentNote   = this.validNotes[this.musicKey];
+  var currentOctave = this.octave;
+  var noteString    = '| ';
+  var self          = this;
 
   $(dnaBits).each(function(indx, elmnt){
     if(elmnt == 1)
@@ -133,9 +135,9 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
       soundState = true;
 
     if(soundState === true)
-      noteString += currentNote;
+      noteString += currentNote + currentOctave +  ' | ';
     else 
-      noteString += '-';
+      noteString += '- | ';
 
     if(soundState === false)
       fitnessScore -= 5;

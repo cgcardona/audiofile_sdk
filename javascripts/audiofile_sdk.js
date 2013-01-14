@@ -80,7 +80,7 @@ AFGeneticsLab.generateCreatures = function()
   return generation;
 };
 
-AFGeneticsLab.incrementLetter = function(letterToIncrement){
+AFGeneticsLab.incrementNote = function(letterToIncrement){
   var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   var indexOfLetter = alphaChars.search(letterToIncrement);
   if (indexOfLetter + 1 < alphaChars.length)
@@ -89,13 +89,14 @@ AFGeneticsLab.incrementLetter = function(letterToIncrement){
     return(letterToIncrement);
 }
 
-AFGeneticsLab.decrementLetter = function(letterToDecrement){
+AFGeneticsLab.decrementNote = function(letterToDecrement){
   var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   var indexOfLetter = alphaChars.search(letterToDecrement);
-  if (indexOfLetter - 1 < 0)
-    return(alphaChars.charAt(indexOfLetter - 1));
-  else
+  console.log(indexOfLetter);
+  if(indexOfLetter - 1 < 0)
     return(letterToDecrement);
+  else
+    return(alphaChars.charAt(indexOfLetter - 1));
 }
 
 AFGeneticsLab.gradeDNA = function(dnaStrand)
@@ -114,14 +115,24 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     if(elmnt == 1)
     {
       toneState += 1;
-      currentNote = self.incrementLetter(currentNote);
-      noteString += currentNote;
+      currentNote = self.incrementNote(currentNote);
+      if(soundState === true)
+        noteString += currentNote;
+      else
+        noteString += '-';
     }
     else if(elmnt == 2)
     {
       toneState -= 1;
-      currentNote = self.decrementLetter(currentNote);
-      noteString += currentNote;
+      //console.log('decrementing start');
+      //console.log(currentNote);
+      currentNote = self.decrementNote(currentNote);
+      //console.log(currentNote);
+      //console.log('decrementing stop');
+      if(soundState === true)
+        noteString += currentNote;
+      else
+        noteString += '-';
     }
 
     if(toneState === 0)
@@ -140,10 +151,12 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     if(soundState === false)
       fitnessScore -= 5;
 
-    if(_.contains(self.scaleSteps, toneState.toString()))
+    if(_.contains(self.scaleSteps, toneState.toString()) && soundState === true)
       fitnessScore += 10;
     else
       fitnessScore -= 10;
+
+    //console.log(noteString);
   });
 
   return [fitnessScore, noteString];

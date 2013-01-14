@@ -285,12 +285,13 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
     else
       name = ((itertr + 1) * 2);
 
+    var tmpGrade = self.gradeDNA(elment[0]);
     createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
         ['name',       name],
         ['dna',        elment[1]],
-        ['fitness',    self.gradeDNA(elment[0]).toString()],
-        ['notes',      'A-BCC---C'],
+        ['fitness',    tmpGrade[0].toString()],
+        ['notes',      tmpGrade[1]],
         ['generation', self.currentGenerationCount],
         ['parent1',    parent1],
         ['parent2',    parent2]

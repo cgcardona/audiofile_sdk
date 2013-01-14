@@ -139,6 +139,12 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
       currentOctave += 1;
     }
 
+    if(currentOctave < 0)
+      currentOctave = 0
+
+    if(currentOctave > 8)
+      currentOctave = 8
+
     if(elmnt === '0' && soundState === true)
       soundState = false;
     else if(elmnt === '0' && soundState === false)

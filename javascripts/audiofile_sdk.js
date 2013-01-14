@@ -106,7 +106,6 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
   var indexOfNote = _.indexOf(self.validNotes, currentNote);
 
   $(dnaBits).each(function(indx, elmnt){
-    var elmnt = 2;
     if(elmnt == 1)
     {
       toneState += 1;

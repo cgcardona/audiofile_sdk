@@ -116,23 +116,11 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     {
       toneState += 1;
       currentNote = self.incrementNote(currentNote);
-      if(soundState === true)
-        noteString += currentNote;
-      else
-        noteString += '-';
     }
     else if(elmnt == 2)
     {
       toneState -= 1;
-      //console.log('decrementing start');
-      //console.log(currentNote);
       currentNote = self.decrementNote(currentNote);
-      //console.log(currentNote);
-      //console.log('decrementing stop');
-      if(soundState === true)
-        noteString += currentNote;
-      else
-        noteString += '-';
     }
 
     if(toneState === 0)
@@ -143,10 +131,12 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     if(elmnt === '0' && soundState === true)
       soundState = false;
     else if(elmnt === '0' && soundState === false)
-    {
       soundState = true;
+
+    if(soundState === true)
+      noteString += currentNote;
+    else 
       noteString += '-';
-    }
 
     if(soundState === false)
       fitnessScore -= 5;
@@ -155,8 +145,6 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
       fitnessScore += 10;
     else
       fitnessScore -= 10;
-
-    //console.log(noteString);
   });
 
   return [fitnessScore, noteString];

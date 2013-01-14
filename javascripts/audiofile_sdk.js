@@ -140,10 +140,10 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
     }
 
     if(currentOctave < 0)
-      currentOctave = 0
+      currentOctave = 0;
 
     if(currentOctave > 8)
-      currentOctave = 8
+      currentOctave = 8;
 
     if(elmnt === '0' && soundState === true)
       soundState = false;
@@ -184,6 +184,24 @@ AFGeneticsLab.getClosestValues = function(a, x)
 
 AFGeneticsLab.evolveDNA = function(generation)
 {
+  var self = this;
+  var sortedGeneration = generation.sort(function(a,b){return a.fitness - b.fitness;});
+  var probabilityRange = _.range(1, this.generationSize + 1);
+
+  var total = 0;
+  _.map(probabilityRange, function(elmnt){
+    total += elmnt;
+  });
+  var mappedArray = _.map(probabilityRange, function(num){
+    var tmp = num / total;
+    return parseFloat(tmp.toFixed(10));
+  });
+
+  var cumulativeTotal = 0;
+  var cumulativeArray = _.map(mappedArray, function(num){
+    return cumulativeTotal += num;
+  });
+
   for(var itr = 0; itr < this.generationCount - 1; itr++)
   {
     var matedDNA = [];
@@ -191,19 +209,8 @@ AFGeneticsLab.evolveDNA = function(generation)
 
     for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
     {
-      var self = this;
-      var probabilityRange = _.range(1, this.generationSize + 1).reverse();
-      var total = 0;
-      _.map(probabilityRange, function(elmnt){
-        total += elmnt;
-      });
-      var mappedArray = _.map(probabilityRange, function(num){
-        return num / total;
-      });
-
-      var sortedGeneration = generation.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
-      var closestValues1 = this.getClosestValues(mappedArray, Math.random());
-      var closestValues2 = this.getClosestValues(mappedArray, Math.random());
+      var closestValues1 = this.getClosestValues(cumulativeArray, parseFloat(Math.random()));
+      var closestValues2 = this.getClosestValues(cumulativeArray, parseFloat(Math.random()));
 
       matedDNA.push(this.mateDNA(sortedGeneration[closestValues1[0]], sortedGeneration[closestValues2[0]], itertr));
     }

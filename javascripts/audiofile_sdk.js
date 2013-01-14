@@ -167,6 +167,21 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
   return [fitnessScore, noteString];
 };
 
+AFGeneticsLab.getClosestValues = function(a, x)
+{
+  var lo = 0, hi = a.length-1;
+  while (hi - lo > 1) {
+    var mid = Math.round((lo + hi)/2);
+    if (a[mid] <= x)
+      lo = mid;
+    else
+      hi = mid;
+  }
+  if (a[lo] == x) 
+    hi = lo;
+  return [_.indexOf(a, a[hi]), a[hi]];
+};
+
 AFGeneticsLab.evolveDNA = function(generation)
 {
   for(var itr = 0; itr < this.generationCount - 1; itr++)
@@ -176,9 +191,21 @@ AFGeneticsLab.evolveDNA = function(generation)
 
     for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
     {
-      var parent1 = generation[_.random(this.generationSize - 1)];
-      var parent2 = generation[_.random(this.generationSize - 1)];
-      matedDNA.push(this.mateDNA(parent1, parent2, itertr));
+      var self = this;
+      var probabilityRange = _.range(1, this.generationSize + 1).reverse();
+      var total = 0;
+      _.map(probabilityRange, function(elmnt){
+        total += elmnt;
+      });
+      var mappedArray = _.map(probabilityRange, function(num){
+        return num / total;
+      });
+
+      var sortedGeneration = generation.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
+      var closestValues1 = this.getClosestValues(mappedArray, Math.random());
+      var closestValues2 = this.getClosestValues(mappedArray, Math.random());
+
+      matedDNA.push(this.mateDNA(sortedGeneration[closestValues1[0]], sortedGeneration[closestValues2[0]], itertr));
     }
 
     var generation = [];
@@ -193,12 +220,6 @@ AFGeneticsLab.evolveDNA = function(generation)
 
 AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 {
-  // here is where the two parent are chosen.
-  // how can we weight the selection ever greater in favor of higher fitness
-  // rated creatures?
-  // length of generation array - current creatures index in current
-  // generation array gives assigned probability
-
   var dnaBreakPoint  = _.random((this.dnaBitCount - 2), 2);
   
   var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;

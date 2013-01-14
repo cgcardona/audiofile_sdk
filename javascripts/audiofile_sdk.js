@@ -130,8 +130,8 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
   // length of generation array - current creatures index in current
   // generation array gives assigned probability
 
-  //var dnaBreakPoint = Math.floor((Math.random() * (this.dnaBitCount - 1)) + 1);
-  var dnaBreakPoint = 1;
+  var dnaBreakPoint  = _.random((this.dnaBitCount - 2), 2);
+  //var dnaBreakPoint = 1;
   
   var parent1SliceA, parent1SliceB, parent2SliceA, parent2SliceB;
   if(parent1.dna[1] !== undefined)
@@ -176,7 +176,7 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   var mutateDNA = _.random(0, 19);
   //if(mutateDNA < 10)
-  if(false)
+  if(true)
   {
     var parentToMutate = _.random(0, 3);
     parents[parentKeys[parentToMutate]] = this.mutateDNA(parents[parentKeys[parentToMutate]][1]);
@@ -232,13 +232,13 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
 AFGeneticsLab.mutateDNA = function(dnaStrand)
 {
+  var mutatedGene = _.random(0, (this.dnaStepCount - 1));
   if(dnaStrand.length > 1)
   {
     var counter = _.random(1, (dnaStrand.length - 1));
     var parentSliceA = dnaStrand.slice(0, counter);
     var parentSliceB = dnaStrand.slice(counter);
     var childSliceA = parentSliceA.slice(0, parentSliceA.length - 1);
-    var mutatedGene = _.random(0, (this.dnaStepCount - 1));
     var spanElmnt1 = $('<span></span>');
     var spanElmnt2 = $('<span class="mutatedDNA">' + mutatedGene + '</span>');
     $(spanElmnt1).append(childSliceA);
@@ -246,8 +246,6 @@ AFGeneticsLab.mutateDNA = function(dnaStrand)
   }
   else
   {
-    var mutatedGene = _.random(0, (this.dnaStepCount - 1));
-    var spanElmnt2 = $('<span class="mutatedDNA">1</span>');
-    return spanElmnt2;
+    return $('<span class="mutatedDNA">' + mutatedGene + '</span>');
   }
 };

@@ -174,9 +174,11 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
   var parentKeys = Object.keys(parents);
 
-  var mutateDNA = _.random(0, 19);
-  //if(mutateDNA < 10)
-  if(true)
+  var mutateDNA = undefined;
+  if(this.mutationPercentage > 0)
+    mutateDNA = _.random(0, (100 / this.mutationPercentage) - 1);
+
+  if(mutateDNA == 0)
   {
     var parentToMutate = _.random(0, 3);
     parents[parentKeys[parentToMutate]] = this.mutateDNA(parents[parentKeys[parentToMutate]][1]);
@@ -245,7 +247,5 @@ AFGeneticsLab.mutateDNA = function(dnaStrand)
     return $(spanElmnt1).after(spanElmnt2).after(parentSliceB);
   }
   else
-  {
     return $('<span class="mutatedDNA">' + mutatedGene + '</span>');
-  }
 };

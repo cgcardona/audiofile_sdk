@@ -15,11 +15,12 @@ window.onload = function()
 
   $('#gaSubmit').click(function(evnt){
     afGeneticsLab.setProperties({
-      generationSize  : parseInt($('#generationSize').val(), 10),
-      generationCount : parseInt($('#generationCount').val(), 10),
-      dnaBitCount     : parseInt($('#dnaBitCount').val(), 10),
-      dnaStepCount    : parseInt($('#dnaStepCount').val(), 10),
-      scaleSteps      : $('#scaleSteps').val().split(',')
+      generationSize     : parseInt($('#generationSize').val(), 10),
+      generationCount    : parseInt($('#generationCount').val(), 10),
+      mutationPercentage : parseInt($('#mutationPercentage').val(), 10),
+      dnaBitCount        : parseInt($('#dnaBitCount').val(), 10),
+      dnaStepCount       : parseInt($('#dnaStepCount').val(), 10),
+      scaleSteps         : $('#scaleSteps').val().split(',')
     });
 
     // create a generation of creatures
@@ -55,5 +56,17 @@ window.onload = function()
       $('#gaDNAList').append(listItem);
     });
     return false;
+  });
+
+  $('#generationSize').change(function(e){
+    $('#genSz').text(e.srcElement.value);
+  });
+
+  $('#generationCount').change(function(e){
+    $('#genCnt').text(e.srcElement.value);
+  });
+
+  $('#mutationPercentage').change(function(e){
+    $('#mutPct').text(e.srcElement.value);
   });
 };

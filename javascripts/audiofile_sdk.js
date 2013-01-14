@@ -18,11 +18,17 @@ AFAudioContext.init = function()
   this.audioContext = new webkitAudioContext();
   var source = this.audioContext.createOscillator();
   source.type = 0; // sine wave
-  source.frequency.value = 340; // sine wave
+  source.frequency.value = 340; 
   source.connect(this.audioContext.destination);
-  console.log(source);
   source.noteOff(0);
 };
+
+AFAudioContext.playSound = function(buffer, time) {
+    var source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(context.destination);
+    source.noteOn(time);
+  }
 
 var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
   [

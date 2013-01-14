@@ -32,12 +32,13 @@ AFAudioContext.playSound = function(buffer, time) {
 
 var AFDNACreature = Object.create(AFObject, AFUtility.createPropertiesObject(
   [
-    ['name', undefined],
-    ['dna', undefined],
-    ['fitness', undefined],
+    ['name',       undefined],
+    ['dna',        undefined],
+    ['fitness',    undefined],
+    ['notes',      undefined],
     ['generation', undefined],
-    ['parent1', undefined],
-    ['parent2', undefined]
+    ['parent1',    undefined],
+    ['parent2',    undefined]
   ])
 );
 
@@ -63,46 +64,78 @@ AFGeneticsLab.generateCreatures = function()
     for(var i = 0; i < this.dnaBitCount; i++)
       dnaString += _.random(0, (this.dnaStepCount - 1));
 
+    var tmpGradeArray = this.gradeDNA(dnaString);
     generation.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
-        ['name', (x + 1)],
-        ['dna', dnaString],
-        ['fitness', this.gradeDNA(dnaString).toString()],
+        ['name',       (x + 1)],
+        ['dna',        dnaString],
+        ['fitness',    tmpGradeArray[0].toString()],
+        ['notes',      tmpGradeArray[1]],
         ['generation', this.currentGenerationCount],
-        ['parent1', 'first generation'],
-        ['parent2', 'first generation']
+        ['parent1',    'first generation'],
+        ['parent2',    'first generation']
       ])
     ));
   }
   return generation;
 };
 
+AFGeneticsLab.incrementLetter = function(letterToIncrement){
+  var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var indexOfLetter = alphaChars.search(letterToIncrement);
+  if (indexOfLetter + 1 < alphaChars.length)
+    return(alphaChars.charAt(indexOfLetter + 1));
+  else
+    return(letterToIncrement);
+}
+
+AFGeneticsLab.decrementLetter = function(letterToDecrement){
+  var alphaChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var indexOfLetter = alphaChars.search(letterToDecrement);
+  if (indexOfLetter - 1 < 0)
+    return(alphaChars.charAt(indexOfLetter - 1));
+  else
+    return(letterToDecrement);
+}
+
 AFGeneticsLab.gradeDNA = function(dnaStrand)
 {
   // right now gradeDNA is hardcoded around the notion of a 3 state dna bit.
   // This needs to be far more generic to handle a far wider range of use cases.
-  var soundState = true;
-  var toneState = 1;
-  var dnaBits = dnaStrand.split('');
+  var soundState   = true;
+  var toneState    = 1;
+  var dnaBits      = dnaStrand.split('');
   var fitnessScore = 0;
+  var currentNote  = 'C';
+  var noteString   = '';
+  var self         = this;
 
-  var self = this;
   $(dnaBits).each(function(indx, elmnt){
-    if(elmnt === 0 && soundState === true)
-      soundState = false;
-    else if(elmnt === 0 && soundState === false)
-      soundState = true;
-
     if(elmnt == 1)
+    {
       toneState += 1;
-
-    if(elmnt == 2)
+      currentNote = self.incrementLetter(currentNote);
+      noteString += currentNote;
+    }
+    else if(elmnt == 2)
+    {
       toneState -= 1;
+      currentNote = self.decrementLetter(currentNote);
+      noteString += currentNote;
+    }
 
     if(toneState === 0)
       toneState = 12;
     else if(toneState == 13)
       toneState = 1;
+
+    if(elmnt === '0' && soundState === true)
+      soundState = false;
+    else if(elmnt === '0' && soundState === false)
+    {
+      soundState = true;
+      noteString += '-';
+    }
 
     if(soundState === false)
       fitnessScore -= 5;
@@ -113,7 +146,7 @@ AFGeneticsLab.gradeDNA = function(dnaStrand)
       fitnessScore -= 10;
   });
 
-  return fitnessScore;
+  return [fitnessScore, noteString];
 };
 
 AFGeneticsLab.evolveDNA = function(generation)
@@ -237,12 +270,13 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
 
     createNewCreaturesArray.push(Object.create(AFDNACreature, AFUtility.createPropertiesObject(
       [
-        ['name', name],
-        ['dna', elment[1]],
-        ['fitness',  self.gradeDNA(elment[0]) ? self.gradeDNA(elment[0]) : '0'],
+        ['name',       name],
+        ['dna',        elment[1]],
+        ['fitness',    self.gradeDNA(elment[0]).toString()],
+        ['notes',      'A-BCC---C'],
         ['generation', self.currentGenerationCount],
-        ['parent1', parent1],
-        ['parent2', parent2]
+        ['parent1',    parent1],
+        ['parent2',    parent2]
       ])
     ));
   });

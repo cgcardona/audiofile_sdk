@@ -45,6 +45,7 @@ window.onload = function()
         $('<p>Generation: ' + elmnt.generation + '</p>'),
         $('<p>DNA: </p>').append(elmnt.dna),
         $('<p>Fitness: ' + elmnt.fitness + '</p>'),
+        $('<p>Notes: ' + elmnt.notes + '</p>'),
         $('<p>Parent1: ' + elmnt.parent1 + '</p>'),
         $('<p>Parent2: ' + elmnt.parent2 + '</p>')
       ];
@@ -88,5 +89,4 @@ window.onload = function()
 
   var afAudioContext = Object.create(AFAudioContext);
   afAudioContext.init();
-  console.log(afAudioContext);
 };

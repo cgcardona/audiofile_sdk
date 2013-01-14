@@ -14,7 +14,7 @@
     </div>
   </header>
   <div id='AFUIGeneticsLab'>
-    <div class='container'>
+    <div class='container' id='formCntr'>
       <form id='gaForm'>
         <div>
           <p>Generations Size: <input value='10' type="range" min="1" max="100" step="1" id="generationSize"></p>
@@ -41,16 +41,20 @@
         </div>
         <button id="gaSubmit">Generate DNA</button>
       </form>
+    </div>
+  </div>
+  <div id='creatureOutput'>
+    <div class='container'>
       <div>
         <ol id='gaDNAList'>
         </ol>
       </div>
     </div>
   </div>
-    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/jquery.js"></script>
-    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/underscore.js"></script>
-    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/AudioFileCore.js"></script>
-    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/audiofile_sdk.js"></script>
-    <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/javascripts/scripts.js"></script>
+  <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/jquery.js"></script>
+  <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/underscore.js"></script>
+  <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/AudioFileCore.js"></script>
+  <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/javascripts/audiofile_sdk.js"></script>
+  <script src="/~carloscardona/audiofile_stuff/audiofile_sdk/applications/AudioFileGeneticsLab/public/javascripts/scripts.js"></script>
   </body>
 </html>

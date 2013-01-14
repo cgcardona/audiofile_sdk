@@ -4,7 +4,14 @@ body{
 }
 
 header{
+  border-bottom:1px solid #e5e5e5;
+}
+
+header{
   background:#f3f3f3;
+}
+
+header, #AFUIGeneticsLab{
   border-bottom:1px solid #e5e5e5;
 }
 
@@ -13,16 +20,22 @@ header h1{
   font-size:1.75em;
 }
 
+#creatureOutput{
+  padding-top:25px;
+}
+
 .container{
   width:1020px;
   margin:auto;
 }
 
-form{
+form > div{
+  padding: 10px;
 }
 
-form > div{
-  margin: 10px;
+#AFUIGeneticsLab{
+  background:#F6F8F3;
+  padding-bottom:10px;
 }
 
 #gaDNAList li{

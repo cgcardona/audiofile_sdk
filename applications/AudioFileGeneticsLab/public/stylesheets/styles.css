@@ -12,7 +12,6 @@ header{
 }
 
 header, #AFUIGeneticsLab{
-  border-bottom:1px solid #e5e5e5;
 }
 
 header h1{
@@ -26,12 +25,12 @@ header h1{
 }
 
 form > div{
-  padding: 10px;
+  padding: 10px 0;
 }
 
 form > div > div{
   border-bottom:1px solid #e5e5e5;
-  padding:10px 0;
+  padding:10px 0 15px 0;
 }
 
 form > div > div p:first-child span{
@@ -58,7 +57,7 @@ form > div > div p:nth-child(2) span:first-child{
 #lftClm, #rghtClm{
   vertical-align:top;
   display:inline-block;
-  width:47%;
+  width:49%;
 }
 
 .rng span:first-child{
@@ -68,7 +67,7 @@ form > div > div p:nth-child(2) span:first-child{
 
 #gaDNAList li{
   list-style-type: decimal;
-  margin: 20px 50px;
+  margin: 20px 25px;
   border: dotted 1px blue;
   padding: 10px;
 }

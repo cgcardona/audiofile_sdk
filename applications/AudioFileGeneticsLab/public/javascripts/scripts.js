@@ -85,4 +85,8 @@ window.onload = function()
       $('#' + elmnt[1]).text(e.srcElement.value);
     });
   });
+
+  var afAudioContext = Object.create(AFAudioContext);
+  afAudioContext.init();
+  console.log(afAudioContext);
 };

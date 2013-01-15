@@ -100,6 +100,7 @@ window.onload = function()
   });
 
 
-  //var afAudioContext = Object.create(AFAudioContext);
-  //afAudioContext.init();
+  var afAudioContext = Object.create(AFAudioContext);
+  console.log(afAudioContext);
+  afAudioContext.init();
 };

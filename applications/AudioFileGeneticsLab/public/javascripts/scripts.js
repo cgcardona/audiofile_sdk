@@ -42,6 +42,7 @@ window.onload = function()
     var sortedGenerationOfCreatures  = evolvedGenerationOfCreatures.sort(function(a,b){return a.fitness - b.fitness;}).reverse();
 
     // Wrap each creature in some markup to display on the screen
+      console.log(sortedGenerationOfCreatures);
     $(sortedGenerationOfCreatures).each(function(indx, elmnt){
       var listItem = $('<li>');
 
@@ -51,8 +52,8 @@ window.onload = function()
         $('<p>DNA: </p>').append(elmnt.dna),
         $('<p>Fitness: ' + elmnt.fitness + '</p>'),
         $('<p>Notes: ' + elmnt.notes + '</p>'),
-        $('<p>Parent1: </p>').append(elmnt.parent1),
-        $('<p>Parent2: </p>').append(elmnt.parent2)
+        $('<p>Parent1: </p>').append($('<a class="parent1DNA showParent" id="' + elmnt.parent1.name + '" href="#">' + elmnt.parent1.name + '</a>')),
+        $('<p>Parent2: </p>').append($('<a class="parent2DNA showParent" id="' + elmnt.parent2.name + '" href="#">' + elmnt.parent2.name + '</a>')),
       ];
 
       $(domEls).each(function(idx, elt){
@@ -61,6 +62,12 @@ window.onload = function()
 
       $('#gaDNAList').append(listItem);
     });
+
+    $('.showParent').click(function(e){
+      console.log(e);
+      return false;
+    });
+
     return false;
   });
 
@@ -91,6 +98,7 @@ window.onload = function()
       $('#' + elmnt[1]).text(e.srcElement.value);
     });
   });
+
 
   //var afAudioContext = Object.create(AFAudioContext);
   //afAudioContext.init();

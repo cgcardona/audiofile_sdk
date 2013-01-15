@@ -185,22 +185,6 @@ AFGeneticsLab.getClosestValues = function(a, x)
 AFGeneticsLab.evolveDNA = function(generation)
 {
   var self = this;
-  var sortedGeneration = generation.sort(function(a,b){return a.fitness - b.fitness;});
-  var probabilityRange = _.range(1, this.generationSize + 1);
-
-  var total = 0;
-  _.map(probabilityRange, function(elmnt){
-    total += elmnt;
-  });
-  var mappedArray = _.map(probabilityRange, function(num){
-    var tmp = num / total;
-    return parseFloat(tmp.toFixed(10));
-  });
-
-  var cumulativeTotal = 0;
-  var cumulativeArray = _.map(mappedArray, function(num){
-    return cumulativeTotal += num;
-  });
 
   for(var itr = 0; itr < this.generationCount - 1; itr++)
   {
@@ -209,8 +193,24 @@ AFGeneticsLab.evolveDNA = function(generation)
 
     for(var itertr = 0; itertr < (this.generationSize / 2); itertr++)
     {
-      var closestValues1 = this.getClosestValues(cumulativeArray, parseFloat(Math.random()));
-      var closestValues2 = this.getClosestValues(cumulativeArray, parseFloat(Math.random()));
+      var sortedGeneration = generation.sort(function(a,b){return a.fitness - b.fitness;});
+      var probabilityRange = _.range(1, this.generationSize + 1);
+
+      var total = 0;
+      _.map(probabilityRange, function(elmnt){
+        total += elmnt;
+      });
+      var mappedArray = _.map(probabilityRange, function(num){
+        var tmp = num / total;
+        return parseFloat(tmp.toFixed(10));
+      });
+
+      var cumulativeTotal = 0;
+      var cumulativeArray = _.map(mappedArray, function(num){
+        return cumulativeTotal += num;
+      });
+      var closestValues1 = this.getClosestValues(cumulativeArray, Math.random());
+      var closestValues2 = this.getClosestValues(cumulativeArray, Math.random());
 
       matedDNA.push(this.mateDNA(sortedGeneration[closestValues1[0]], sortedGeneration[closestValues2[0]], itertr));
     }
@@ -300,6 +300,18 @@ AFGeneticsLab.mateDNA = function(parent1, parent2, itertr)
     tmpSpanEl2B = $('<span class="parent2DNA">').append(parents.parent2SliceB);
   else
     tmpSpanEl2B = $('<span class="parent2DNA">' + parents.parent2SliceB[1] + '</span>');
+
+  if(parents['parent1SliceA'][2] !== undefined)
+    parent1SliceA = $(parents['parent1SliceA']).text();
+
+  if(parents['parent1SliceB'][2] !== undefined)
+    parent1SliceB = $(parents['parent1SliceB']).text();
+
+  if(parents['parent2SliceA'][2] !== undefined)
+    parent2SliceA = $(parents['parent2SliceA']).text();
+
+  if(parents['parent2SliceB'][2] !== undefined)
+    parent2SliceB = $(parents['parent2SliceB']).text();
 
   var concatDNAStrands = [[parent1SliceA + parent2SliceB, $(tmpSpanEl1A).after(tmpSpanEl2B[0])], [parent2SliceA + parent1SliceB, $(tmpSpanEl2A).after(tmpSpanEl1B[0])]];
 

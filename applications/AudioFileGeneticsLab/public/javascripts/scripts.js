@@ -68,9 +68,13 @@ window.onload = function()
       return false;
     });
 
-    $('.play').click(function(e){
-      var afAudioContext = Object.create(AFAudioContext);
-      afAudioContext.init(440);
+    var foobar = {};
+    $('.play').toggle(function(e){
+      foobar.afAudioContext = Object.create(AFAudioContext);
+      foobar.afAudioContext.init(440);
+      return false;
+    }, function(){
+      foobar.afAudioContext.source.noteOff(0);
       return false;
     });
 

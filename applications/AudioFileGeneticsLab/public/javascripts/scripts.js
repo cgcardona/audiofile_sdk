@@ -54,6 +54,7 @@ window.onload = function()
         $('<p>Notes: ' + elmnt.notes + '</p>'),
         $('<p>Parent1: </p>').append($('<a class="parent1DNA showParent" id="' + elmnt.parent1.name + '" href="#">' + elmnt.parent1.name + '</a>')),
         $('<p>Parent2: </p>').append($('<a class="parent2DNA showParent" id="' + elmnt.parent2.name + '" href="#">' + elmnt.parent2.name + '</a>')),
+        $('<p></p>').append($('<a class="play" href="#">Play</a>')),
       ];
 
       $(domEls).each(function(idx, elt){
@@ -64,7 +65,12 @@ window.onload = function()
     });
 
     $('.showParent').click(function(e){
-      console.log(e);
+      return false;
+    });
+
+    $('.play').click(function(e){
+      var afAudioContext = Object.create(AFAudioContext);
+      afAudioContext.init(440);
       return false;
     });
 
@@ -99,8 +105,4 @@ window.onload = function()
     });
   });
 
-
-  var afAudioContext = Object.create(AFAudioContext);
-  console.log(afAudioContext);
-  afAudioContext.init();
 };

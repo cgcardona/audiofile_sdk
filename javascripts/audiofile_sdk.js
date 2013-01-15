@@ -21,14 +21,14 @@ var AFAudioContext = Object.create(AFObject, AFUtility.createPropertiesObject(
   ])
 );
 
-AFAudioContext.init = function()
+AFAudioContext.init = function(frequency)
 {
   this.audioContext = new webkitAudioContext();
   var source = this.audioContext.createOscillator();
   source.type = 0; // sine wave
-  source.frequency.value = 340; 
+  source.frequency.value = this.frequencies[_.random(15, 67)]; 
   source.connect(this.audioContext.destination);
-  source.noteOff(0);
+  source.noteOn(0);
 };
 
 AFAudioContext.playSound = function(buffer, time){
